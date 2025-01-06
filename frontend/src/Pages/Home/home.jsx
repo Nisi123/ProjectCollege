@@ -5,6 +5,7 @@ import HIW1 from "../../Media/HIW1.png";
 import HIW2 from "../../Media/HIW2.png";
 import HIW3 from "../../Media/HIW3.png";
 import { Link } from "react-router-dom";
+import UserImage from "../../Media/User.png";
 
 const home = () => {
   return (
@@ -104,6 +105,41 @@ const home = () => {
         <button>
           <Link to='/'>Get Started</Link>
         </button>
+      </div>
+      <div className='communityReview'>
+        <h1>Community Review</h1>
+        <div className='communityReviewCardBase'>
+          <div className='card'>
+            <div>
+              <h2>User Name</h2>
+              <img
+                src={UserImage}
+                alt='UserImage'
+              />
+            </div>
+            <p>User Review</p>
+          </div>
+          <div className='card'>
+            <div>
+              <h2>User Name</h2>
+              <img
+                src={UserImage}
+                alt='UserImage'
+              />
+            </div>
+            <p>User Review</p>
+          </div>
+          <div className='card'>
+            <div>
+              <h2>User Name</h2>
+              <img
+                src={UserImage}
+                alt='UserImage'
+              />
+            </div>
+            <p>User Review</p>
+          </div>
+        </div>
       </div>
     </>
   );

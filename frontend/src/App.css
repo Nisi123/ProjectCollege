@@ -264,7 +264,7 @@ body {
 }
 
 .howitworksSection div:nth-child(3) {
-  margin-left: 45rem;
+  margin-left: 40rem;
 }
 
 .howitworksSection div img {
@@ -293,6 +293,7 @@ body {
   cursor: pointer;
   background: var(--MainBgColor);
   color: white;
+  border: none;
 }
 
 .readytoengageSection button a {
@@ -308,4 +309,58 @@ body {
 
 .readytoengageSection button:hover a {
   color: var(--MainBgColor);
+}
+
+/* Review Section */
+
+.communityReview {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-flow: column;
+  margin-top: 5rem;
+}
+
+.communityReview h1 {
+  color: var(--MainBgColor);
+  font-size: var(--MainTitleFontSize);
+  font-weight: var(--MainTitleFontWeight);
+  margin-left: 15.5rem;
+}
+
+.communityReviewCardBase {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5rem;
+  width: 100%;
+  margin: 2rem 0rem;
+}
+
+.card {
+  padding: 1rem 1rem;
+  display: flex;
+  flex-flow: column;
+  align-items: start;
+  justify-content: start;
+  width: 15rem;
+  height: 13rem;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.card div {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.card div img {
+  height: 2rem;
+}
+
+.card div h2 {
+  font-size: 1rem;
+  font-weight: 700;
 }
