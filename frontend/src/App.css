@@ -6,22 +6,17 @@ body {
 :root {
   --TestBorderBlack: 2px solid black;
   --TestBorderRed: 2px solid red;
-
   --MainBgColor: rgb(63, 63, 252);
-
   --MainTitleFontSize: 3rem;
   --MainTitleFontWeight: 800;
-
   --MainParagraphFontSize: 1.2rem;
   --MainParagraphFontWeight: 350;
-
   --ButtonFontSize: 1.2rem;
   --ButtonPadding: 0.5rem 1rem;
   --ButtonBorderRadius: 0.7rem;
 }
 
 /* Navbar */
-
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -45,7 +40,6 @@ body {
 }
 
 /* Footer */
-
 .footer {
   background-color: var(--MainBgColor);
   display: flex;
@@ -109,7 +103,6 @@ body {
 }
 
 /* Hero Section */
-
 .heroSection {
   display: flex;
   justify-content: space-between;
@@ -214,7 +207,6 @@ body {
 }
 
 /* Featured Section */
-
 .featuredSection h2 {
   color: var(--MainBgColor);
   font-size: var(--MainTitleFontSize);
@@ -239,7 +231,6 @@ body {
 }
 
 /* Howitworks Section */
-
 .howitworksSection h1 {
   color: var(--MainBgColor);
   font-size: var(--MainTitleFontSize);
@@ -272,7 +263,6 @@ body {
 }
 
 /* Readytoengage Section */
-
 .readytoengageSection {
   display: flex;
   flex-flow: column;
@@ -312,7 +302,6 @@ body {
 }
 
 /* Review Section */
-
 .communityReview {
   display: flex;
   justify-content: center;
@@ -363,4 +352,4 @@ body {
 .card div h2 {
   font-size: 1rem;
   font-weight: 700;
-}
+} /*# sourceMappingURL=App.css.map */
