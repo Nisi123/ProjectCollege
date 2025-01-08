@@ -15,7 +15,6 @@ class Project(BaseModel):
 class UserInDB(User):
     id: str  # MongoDB _id as 'id'
     projects: Optional[List[Project]] = []  # Optional field for associated projects
-
 # Note: 'projects' is an Optional field with a default empty list.
 
 class UserInDBResponse(BaseModel):

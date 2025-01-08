@@ -41,3 +41,10 @@ async def update_user_profile(user_id: str, profile_pic: str) -> UserInDB:
     if updated_user is None:
         return None
     return UserInDB(**updated_user)
+
+
+    db = get_db()
+    user = db["users"].find_one({"email": email})
+    if user is None:
+        return None
+    return UserInDB(**user)

@@ -44,3 +44,17 @@ async def get_user(user_id: str):
     print(f"Returning user data with projects: {user_data}")
     
     return user_data
+
+    # Fetch the user by email
+    user = await get_user_by_email(form_data.username)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    # Verify the password
+    if not verify_password(form_data.password, user["hashed_password"]):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    # Create a JWT token upon successful login
+    access_token = create_access_token(data={"sub": user["email"]})
+
+    return {"access_token": access_token, "token_type": "bearer"}

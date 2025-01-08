@@ -1,0 +1,251 @@
+/* Hero Section */
+.heroSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 15.5rem;
+}
+
+.heroSectionContent {
+  position: relative;
+  margin-top: 8rem;
+  width: 20rem;
+}
+
+.heroSectionContent h1 {
+  font-size: var(--MainTitleFontSize);
+  font-weight: var(--MainTitleFontWeight);
+  color: var(--MainBgColor);
+  text-shadow: 0rem 0rem 2rem rgb(255, 255, 255);
+}
+
+.heroSectionContent p {
+  font-size: var(--MainParagraphFontSize);
+  font-weight: var(--MainParagraphFontWeight);
+}
+
+.heroSectionContent button {
+  font-size: var(--ButtonFontSize);
+  padding: var(--ButtonPadding);
+  border-radius: var(--ButtonBorderRadius);
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.heroSectionContent button a {
+  color: var(--MainBgColor);
+  text-decoration: none;
+}
+
+.heroSectionContent button:first-child a {
+  color: white;
+}
+
+.heroSectionContent button:first-child {
+  background-color: var(--MainBgColor);
+  color: white;
+  border: none;
+}
+
+.heroSectionContent button:last-child {
+  background-color: white;
+  color: var(--MainBgColor);
+  border: 2px solid var(--MainBgColor);
+}
+
+.heroSectionContent button:last-child:hover,
+.heroSectionContent button:last-child:hover a {
+  background-color: var(--MainBgColor);
+  color: white;
+}
+
+.heroSectionContent button:first-child:hover a {
+  color: var(--MainBgColor);
+}
+
+.heroSectionContent button:first-child:hover {
+  background-color: transparent;
+  border: 2px solid var(--MainBgColor);
+}
+
+.heroSectionImages img {
+  position: absolute;
+  top: -11rem;
+  z-index: -3;
+  width: 100%;
+}
+
+.heroSectionImages img:last-child {
+  right: -4rem;
+}
+
+.heroSectionImages img:first-child {
+  left: -8rem;
+  position: absolute;
+}
+
+.gradient {
+  position: absolute;
+  left: -5rem;
+  width: 35rem;
+  height: 10rem;
+  top: 2rem;
+  border-radius: 5rem;
+  z-index: -2;
+  filter: blur(0.5rem);
+  background: linear-gradient(to bottom, rgb(255, 255, 255) 90%, transparent);
+}
+
+.heroSectionImage {
+  overflow: hidden !important;
+  width: 70%;
+  filter: saturate(1.5);
+}
+
+/* Featured Section */
+.featuredSection h2 {
+  color: var(--MainBgColor);
+  font-size: var(--MainTitleFontSize);
+  font-weight: var(--MainTitleFontWeight);
+  text-align: center;
+}
+
+.featuredSectionContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5rem;
+}
+
+.featuredSectionContent div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 20rem;
+  width: 22rem;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+/* Howitworks Section */
+.howitworksSection h1 {
+  color: var(--MainBgColor);
+  font-size: var(--MainTitleFontSize);
+  font-weight: var(--MainTitleFontWeight);
+  margin-left: 15.5rem;
+  margin-top: 5rem;
+  margin-bottom: 5rem;
+}
+
+.howitworksSection p {
+  font-size: 1rem;
+  font-weight: var(--MainParagraphFontWeight);
+  margin-left: 1rem;
+  width: 20rem;
+}
+
+.howitworksSection div {
+  display: flex;
+  align-items: start;
+  margin-left: 7rem;
+  margin-bottom: 1rem;
+}
+
+.howitworksSection div:nth-child(3) {
+  margin-left: 40rem;
+}
+
+.howitworksSection div img {
+  height: 15rem;
+}
+
+/* Readytoengage Section */
+.readytoengageSection {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+
+.readytoengageSection h1 {
+  color: var(--MainBgColor);
+  font-size: var(--MainTitleFontSize);
+  font-weight: var(--MainTitleFontWeight);
+  margin-top: 5rem;
+}
+
+.readytoengageSection button {
+  font-size: var(--ButtonFontSize);
+  padding: var(--ButtonPadding);
+  border-radius: var(--ButtonBorderRadius);
+  cursor: pointer;
+  background: var(--MainBgColor);
+  color: white;
+  border: none;
+}
+
+.readytoengageSection button a {
+  color: white;
+  text-decoration: none;
+}
+
+.readytoengageSection button:hover {
+  background: white;
+  color: var(--MainBgColor);
+  border: 2px solid var(--MainBgColor);
+}
+
+.readytoengageSection button:hover a {
+  color: var(--MainBgColor);
+}
+
+/* Review Section */
+.communityReview {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-flow: column;
+  margin-top: 5rem;
+}
+
+.communityReview h1 {
+  color: var(--MainBgColor);
+  font-size: var(--MainTitleFontSize);
+  font-weight: var(--MainTitleFontWeight);
+  margin-left: 15.5rem;
+}
+
+.communityReviewCardBase {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5rem;
+  width: 100%;
+  margin: 2rem 0rem;
+}
+
+.card {
+  padding: 1rem 1rem;
+  display: flex;
+  flex-flow: column;
+  align-items: start;
+  justify-content: start;
+  width: 15rem;
+  height: 13rem;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.card div {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.card div img {
+  height: 2rem;
+}
+
+.card div h2 {
+  font-size: 1rem;
+  font-weight: 700;
+} /*# sourceMappingURL=App.css.map */
