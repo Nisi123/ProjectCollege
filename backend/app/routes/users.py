@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from app.models.user import User, UserInDB
+from app.models.user import User, UserInDB, UserInDBResponse
 from app.database import get_db
 from bson import ObjectId
 from typing import List
@@ -35,12 +35,5 @@ async def get_user(user_id: str):
         user_data["projects"] = [{"id": str(project["_id"]), "name": project["name"]} for project in projects]
     else:
         user_data["projects"] = [] 
-    
-    return user_data
-
-@router.get("/", response_model=UserInDB)
-async def get_all_users():
-    db = get_db()
-    user_data = db.users.find()
     
     return user_data

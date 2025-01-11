@@ -21,29 +21,3 @@ async def get_user_by_id(user_id: str) -> UserInDB:
     if user is None:
         return None
     return UserInDB(**user)
-
-# # Get all users
-# async def get_all_users() -> list[UserInDB]:
-#     db = get_db()
-#     users = db["users"].find()
-#     return [UserInDB(**user) for user in users]
-
-# Update user profile (for example, change profile pic)
-# async def update_user_profile(user_id: str, profile_pic: str) -> UserInDB:
-    db = get_db()
-    # Update the user’s profile pic based on _id
-    updated_user = db["users"].find_one_and_update(
-        {"_id": ObjectId(user_id)},
-        {"$set": {"profile_pic": profile_pic}},
-        return_document=True
-    )
-    if updated_user is None:
-        return None
-    return UserInDB(**updated_user)
-
-
-    db = get_db()
-    user = db["users"].find_one({"email": email})
-    if user is None:
-        return None
-    return UserInDB(**user)
