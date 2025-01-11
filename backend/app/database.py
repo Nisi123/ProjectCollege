@@ -15,8 +15,5 @@ def init_db():
     if 'projects' not in db.list_collection_names():
         db.create_collection('projects')
 
-    print("Database initialized with collections: 'users', 'projects'")
-
 def get_db():
-    """Return the database connection."""
     return db

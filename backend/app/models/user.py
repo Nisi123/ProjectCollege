@@ -6,16 +6,15 @@ class User(BaseModel):
     username: str
     email: str
     password: str
-    profile_pic: Optional[str] = "no profile pic"  # Default profile pic
+    profile_pic: Optional[str] = "no profile pic"
 
 class Project(BaseModel):
     id: str
     name: str
 
 class UserInDB(User):
-    id: str  # MongoDB _id as 'id'
-    projects: Optional[List[Project]] = []  # Optional field for associated projects
-# Note: 'projects' is an Optional field with a default empty list.
+    id: str
+    projects: Optional[List[Project]] = []
 
 class UserInDBResponse(BaseModel):
     id: str

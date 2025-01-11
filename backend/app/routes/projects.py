@@ -19,10 +19,8 @@ async def create_project(project: Project):
     
     project_dict = project.dict()
     
-    # Insert the project into the database
     result = db.projects.insert_one(project_dict)
     
-    # Add the inserted MongoDB _id as 'id' to the response
     project_in_db = project_dict
     project_in_db["id"] = str(result.inserted_id)
     
@@ -33,10 +31,8 @@ async def create_project(project: Project):
 async def get_all_projects():
     db = get_db()
     
-    # Fetch all projects
     projects = db.projects.find()
     
-    # Return all projects with their 'id' field mapped from MongoDB _id
     return [{"id": str(project["_id"]), **project} for project in projects]
 
 # GET /projects/{project_id} - Get a specific project by ID

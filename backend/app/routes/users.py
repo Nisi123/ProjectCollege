@@ -22,7 +22,6 @@ async def create_user(user: User):
 async def get_user(user_id: str):
     db = get_db()
     
-    # Fetch user data by user_id
     user_data = db.users.find_one({"_id": ObjectId(user_id)})
     
     if not user_data:
@@ -30,31 +29,18 @@ async def get_user(user_id: str):
     
     user_data["id"] = str(user_data["_id"])
 
-    # Get associated projects for the user by matching username and user_associated
     projects = list(db.projects.find({"user_associated": user_data["username"]}))
     
-    
-    # If projects are found, add them to user_data, otherwise set "projects" to an empty list
     if projects:
         user_data["projects"] = [{"id": str(project["_id"]), "name": project["name"]} for project in projects]
     else:
-        user_data["projects"] = []  # If no projects, set an empty list
-    
-    # Log the final user data including projects for debugging
-    print(f"Returning user data with projects: {user_data}")
+        user_data["projects"] = [] 
     
     return user_data
 
-    # Fetch the user by email
-    user = await get_user_by_email(form_data.username)
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
-    # Verify the password
-    if not verify_password(form_data.password, user["hashed_password"]):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
-    # Create a JWT token upon successful login
-    access_token = create_access_token(data={"sub": user["email"]})
-
-    return {"access_token": access_token, "token_type": "bearer"}
+@router.get("/", response_model=UserInDB)
+async def get_all_users():
+    db = get_db()
+    user_data = db.users.find()
+    
+    return user_data

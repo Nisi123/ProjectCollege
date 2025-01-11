@@ -1,22 +1,21 @@
 from fastapi import FastAPI
 from app.routes import users, projects
 from app.database import init_db
-from fastapi.middleware.cors import CORSMiddleware  # Correctly import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI()
 
 origins = [
-    "http://localhost:5173",  # React frontend (localhost:5173 is the default port for React dev server)
-    # You can add more allowed origins for production or other environments if needed
+    "http://localhost:5173",
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # Specify the allowed origins (React frontend in this case)
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 

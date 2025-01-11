@@ -7,8 +7,8 @@ class Project(BaseModel):
     name: str
     description: str
     time_submitted: str
-    user_associated: str  # Username of the user associated with the project
+    user_associated: str
     reviews: List[str]
 
 class ProjectInDB(Project):
-    id: str  # This will be used for the MongoDB _id field
+    id: str
