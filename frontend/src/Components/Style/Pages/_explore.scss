@@ -81,7 +81,33 @@
   object-fit: cover;
 }
 
-.projectCard div {
-  position: absolute;
-  top: 50%;
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 0;
+  gap: 1rem;
+}
+
+.pagination button {
+  border: none;
+  background: rgb(247, 247, 247);
+  padding: 0.5rem 0.75rem;
+  border-radius: 50%;
+  box-shadow: 0rem 0rem 0.1rem;
+}
+
+.pagination button:hover {
+  cursor: pointer;
+}
+
+.active {
+  background-color: #007bff !important;
+  color: white;
+  border: 1px solid #0056b3;
+}
+
+.pagination button:last-child,
+.pagination button:first-child {
+  padding: 0.75rem 0.5rem;
 }

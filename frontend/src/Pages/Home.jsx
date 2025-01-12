@@ -1,13 +1,45 @@
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
 import HeroImage from "./../Media/AbstractHeroBg.png";
 import HeroImage1 from "./../Media/HeroImage1.png";
 import HeroImage2 from "./../Media/HeroImage2.png";
 import HIW1 from "./../Media/HIW1.png";
 import HIW2 from "./../Media/HIW2.png";
 import HIW3 from "./../Media/HIW3.png";
-import { Link } from "react-router-dom";
 import UserImage from "./../Media/User.png";
 
 const Home = () => {
+  const [topProjects, setTopProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchTopProjects = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/projects/");
+        const projects = response.data.projects;
+
+        // Sort projects by like_count in descending order
+        const sortedProjects = projects.sort(
+          (a, b) => b.like_count - a.like_count
+        );
+
+        // Select top 3 most liked projects
+        setTopProjects(sortedProjects.slice(0, 3));
+      } catch (error) {
+        setError("Error fetching projects.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTopProjects();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
   return (
     <>
       <div className='heroSection'>
@@ -44,14 +76,25 @@ const Home = () => {
           />
         </div>
       </div>
+
+      {/* Featured Section */}
       <div className='featuredSection'>
         <h2>Featured Talents</h2>
         <div className='featuredSectionContent'>
-          <div>a</div>
-          <div>b</div>
-          <div>c</div>
+          {topProjects.map((project) => (
+            <div
+              key={project.id}
+              className='featuredProject'
+            >
+              <h3>{project.name}</h3>
+              <p>{project.description}</p>
+              <p>Likes: {project.like_count}</p>
+              <Link to={`/projects/${project.id}`}>View Project</Link>
+            </div>
+          ))}
         </div>
       </div>
+
       <div className='howitworksSection'>
         <h1>How It Works</h1>
         <div>
@@ -73,10 +116,11 @@ const Home = () => {
           <div>
             <h3>2</h3>
             <p>
-              Once you're signed in, it's time to shine! Upload your creations,
-              add a title and description, and categorize your work to make it
-              easy for others to find and appreciate. Whether it’s art, writing,
-              photography, or a project, your talent deserves to be seen.
+              Once you&apos;re signed in, it&apos;s time to shine! Upload your
+              creations, add a title and description, and categorize your work
+              to make it easy for others to find and appreciate. Whether it’s
+              art, writing, photography, or a project, your talent deserves to
+              be seen.
             </p>
             <img
               src={HIW2}

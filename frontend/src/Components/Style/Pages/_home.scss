@@ -119,7 +119,8 @@
 
 .featuredSectionContent div {
   display: flex;
-  justify-content: space-between;
+  flex-flow: column;
+  justify-content: center;
   align-items: center;
   height: 20rem;
   width: 22rem;
