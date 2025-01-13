@@ -39,7 +39,7 @@ const Navbar = ({ userId }) => {
 
 Navbar.propTypes = {
   username: PropTypes.string.isRequired,
-  userId: PropTypes.string.isRequired, // Ensure userId is passed as a string and is required
+  userId: PropTypes.string.isRequired,
 };
 
 export default Navbar;

@@ -5,10 +5,12 @@ import About from "./Pages/about";
 import Explore from "./Pages/Explore";
 import Layout from "./components/Layout/Layout";
 import UserPage from "./Pages/UserPage";
+import SignUp from "./Pages/Signup";
+import Login from "./Pages/Login";
 
 function App() {
-  const username = "Sushant"; // Example username
-  const userId = "67793573326ef0dd8d22cb11"; // Example userId
+  const username = "Shyam";
+  const userId = "678541cab374690a1a846106";
   return (
     <Router>
       <Layout
@@ -32,6 +34,14 @@ function App() {
           <Route
             path='/user/:userId'
             element={<UserPage />}
+          />
+          <Route
+            path='/signup'
+            element={<SignUp />}
+          />
+          <Route
+            path='/login'
+            element={<Login />}
           />
         </Routes>
       </Layout>

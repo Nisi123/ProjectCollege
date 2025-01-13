@@ -1,11 +1,16 @@
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import PropTypes from "prop-types";
+import { useLocation } from "react-router-dom";
 
 const Layout = ({ children, username, userId }) => {
+  const location = useLocation();
+
+  if (location.pathname === "/signup" || location.pathname === "/login") {
+    return <>{children}</>; // Render only the child components
+  }
   return (
     <div className='layout'>
-      {/* Pass username and userId to Navbar */}
       <Navbar
         username={username}
         userId={userId}

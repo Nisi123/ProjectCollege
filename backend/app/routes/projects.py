@@ -6,7 +6,6 @@ from typing import List
 
 router = APIRouter()
 
-# POST /projects/ - Create a new project
 @router.post("/", response_model=ProjectInDB)
 async def create_project(project: Project):
     db = get_db()
@@ -26,7 +25,6 @@ async def create_project(project: Project):
     
     return project_in_db
 
-# GET /projects/{project_id} - Get a specific project by ID
 @router.get("/{project_id}", response_model=ProjectInDB)
 async def get_project(project_id: str):
     db = get_db()
@@ -40,7 +38,6 @@ async def get_project(project_id: str):
     project_data["id"] = str(project_data["_id"])  # Map MongoDB _id to 'id'
     return ProjectInDB(**project_data)
 
-# GET /projects/ - Get all projects
 @router.get("/", response_model=dict)
 async def get_all_projects(skip: int = 0, limit: int = 20, sort: str = "like_count"):
     db = get_db()
@@ -68,9 +65,7 @@ async def get_all_projects(skip: int = 0, limit: int = 20, sort: str = "like_cou
         "totalPages": total_pages,  # Include totalPages in the response
         "totalProjects": total_projects  # Include total number of projects
     }
-    
-    
-# POST /projects/{project_id}/like - Increment the like count for a project
+      
 @router.post("/{project_id}/like", response_model=ProjectInDB)
 async def like_project(project_id: str):
     db = get_db()

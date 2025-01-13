@@ -62,7 +62,7 @@ const Home = () => {
           </p>
           <div>
             <button>
-              <Link to='/'>Sign In</Link>
+              <Link to='/signup'>Sign In</Link>
             </button>
             <button>
               <Link to='/explore'>Explore</Link>

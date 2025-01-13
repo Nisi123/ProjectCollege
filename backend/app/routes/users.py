@@ -3,18 +3,13 @@ from app.models.user import User, UserInDB, UserInDBResponse
 from app.database import get_db
 from bson import ObjectId
 from typing import List
-from app.services.user_service import create_user, login_user
+from app.services.user_service import create_user, login_user, get_all_users, get_user_by_id
 
 router = APIRouter()
 
 @router.post("/", response_model=UserInDB)
-async def create_user(user: User):
-    db = get_db()
-    user_dict = user.dict()
-    result = db.users.insert_one(user_dict)
-    user_in_db = user_dict
-    user_in_db["id"] = str(result.inserted_id)
-    return user_in_db
+async def create_user_route(user: User):
+    return await create_user(user)
 
 @router.get("/{user_id}", response_model=UserInDB)
 async def get_user(user_id: str):
