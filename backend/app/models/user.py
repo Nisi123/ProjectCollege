@@ -9,6 +9,8 @@ class User(BaseModel):
     profile_pic: Optional[str] = "No Profile Pic"
     description: Optional[str] = "No Description"
     position: Optional[str] = "User Position"  # New field
+    year_of_birth: Optional[int] = 0 # New field
+    level: Optional[str] = "No Level"  # New field
 
 class Project(BaseModel):
     id: str
@@ -26,7 +28,8 @@ class UserInDBResponse(BaseModel):
     projects: Optional[List[Project]] = []
     description: Optional[str]
     position: Optional[str]
-
+    year_of_birth: Optional[int]
+    level: Optional[str]
 
 
     class Config:

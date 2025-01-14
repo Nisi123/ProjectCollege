@@ -20,3 +20,48 @@
   color: var(--MainBgColor);
   margin-bottom: 0rem;
 }
+
+.userpageMainHeader p {
+  font-size: var(--MainParagraphFontSize);
+  font-weight: var(--MainParagraphFontWeight);
+  margin-top: 0.5rem;
+}
+
+.userpageDescriptionContainer {
+  display: flex;
+  height: 10rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.userpageDescriptionContainer div {
+  display: flex;
+  justify-content: center;
+  width: 50%;
+  text-align: center;
+}
+
+.userpageDescriptionUserInfo {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 2rem;
+  font-size: 0.8rem;
+}
+
+.UserPageSearchBar {
+  margin-right: 13rem;
+}
+
+.projectsHeader {
+  font-size: var(--MainTitleFontSize);
+  font-weight: var(--MainTitleFontWeight);
+  color: var(--MainBgColor);
+  margin: 5rem 0rem 2rem 13rem;
+}
+
+.UserPageProjectsContainer {
+  margin: 2rem 5rem 0rem 5rem;
+}
