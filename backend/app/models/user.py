@@ -6,7 +6,9 @@ class User(BaseModel):
     username: str
     email: str
     password: str
-    profile_pic: Optional[str] = "no profile pic"
+    profile_pic: Optional[str] = "No Profile Pic"
+    description: Optional[str] = "No Description"
+    position: Optional[str] = "User Position"  # New field
 
 class Project(BaseModel):
     id: str
@@ -22,6 +24,10 @@ class UserInDBResponse(BaseModel):
     email: str
     profile_pic: Optional[str]
     projects: Optional[List[Project]] = []
+    description: Optional[str]
+    position: Optional[str]
+
+
 
     class Config:
         orm_mode = True

@@ -43,13 +43,16 @@ const UserProfile = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div>
-      <h1>{user.username} Profile</h1>
-      <img
-        src={user.profile_pic}
-        alt='Profile'
-        style={{ width: "150px", borderRadius: "50%" }}
-      />
+    <div className='userpage'>
+      <div className='userpageMainHeader'>
+        <img
+          src={user.profile_pic}
+          alt='Profile Picture'
+        />
+        <h1>{user.username}</h1>
+      </div>
+      <p>{user.position}</p>
+      <p>{user.description}</p>
       <p>Email: {user.email}</p>
       <h3>Projects</h3>
       {user.projects.length > 0 ? (
@@ -63,7 +66,7 @@ const UserProfile = () => {
       ) : (
         <p>No projects available.</p>
       )}
-      <button onClick={logout}>Logout</button> {/* Logout button */}
+      <button onClick={logout}>Logout</button>
     </div>
   );
 };

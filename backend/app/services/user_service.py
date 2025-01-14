@@ -14,7 +14,7 @@ async def create_user(user: User) -> UserInDB:
 
     # Hash the password before saving
     hashed_password = hash_password(user.password)
-    user_dict['password'] = hashed_password  # Hash the password before saving it
+    user_dict['password'] = hashed_password
 
     # Insert the user into the database
     result = db["users"].insert_one(user_dict)
@@ -22,7 +22,7 @@ async def create_user(user: User) -> UserInDB:
 
     # Convert _id to string and add it as the 'id' field in the response
     created_user["id"] = str(created_user["_id"])
-    del created_user["_id"]  # Remove the MongoDB _id field, as it's no longer needed
+    del created_user["_id"]
 
     return UserInDB(**created_user)
 
@@ -63,7 +63,7 @@ async def login_user(email: str, password: str) -> Optional[UserInDB]:
         print("User not found or email mismatch")
     return None
 
-async def get_user_by_id(user_id: str) -> UserInDB:
+async def get_user_by_id(user_id: str) -> Optional[UserInDB]:
     db = get_db()
     user = db["users"].find_one({"_id": ObjectId(user_id)})
     
@@ -90,4 +90,3 @@ async def get_all_users() -> list[UserInDB]:
         user_list.append(UserInDB(**user))
     
     return user_list
-

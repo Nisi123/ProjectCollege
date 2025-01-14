@@ -567,6 +567,29 @@ p span a {
   text-decoration: none;
 }
 
+.userpageMainHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.userpageMainHeader img {
+  border: 2px solid black;
+  border-radius: 50%;
+  height: 8rem;
+  width: 8rem;
+}
+
+.userpageMainHeader h1 {
+  margin-top: 1rem;
+  font-size: var(--MainTitleFontSize);
+  font-weight: var(--MainTitleFontWeight);
+  color: var(--MainBgColor);
+  margin-bottom: 0rem;
+}
+
 body {
   margin: 0;
   font-family: inter;

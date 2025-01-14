@@ -13,11 +13,11 @@ router = APIRouter()
 async def create_user_route(user: User):
     return await create_user(user)
 
-@router.get("/{user_id}", response_model=UserInDB)
+@router.get("/{user_id}", response_model=UserInDBResponse)
 async def get_user(user_id: str):
     user_data = await get_user_by_id(user_id)
     if user_data is None:
-        raise HTTPException(status_code=404, detail="User  not found")
+        raise HTTPException(status_code=404, detail="User not found")
     return user_data
 
 @router.get("/", response_model=List[UserInDBResponse])
