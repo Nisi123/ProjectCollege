@@ -1,47 +1,44 @@
 import "./Components/Style/style.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./Pages/Home";
-import About from "./Pages/about";
+import About from "./Pages/About";
 import Explore from "./Pages/Explore";
 import Layout from "./components/Layout/Layout";
 import UserPage from "./Pages/UserPage";
-import SignUp from "./Pages/Signup";
-import Login from "./Pages/Login";
+import SignupLogin from "./Pages/Signup";
+import ProtectedRoute from "./Services/protectedRoute"; // Import ProtectedRoute
 
 function App() {
-  const username = "Shyam";
-  const userId = "678541cab374690a1a846106";
   return (
     <Router>
-      <Layout
-        username={username}
-        userId={userId}
-      >
+      <Layout>
         <Routes>
-          <Route
-            exact
-            path='/'
-            element={<Home />}
-          />
-          <Route
-            path='/about'
-            element={<About />}
-          />
-          <Route
-            path='/explore'
-            element={<Explore />}
-          />
-          <Route
-            path='/user/:userId'
-            element={<UserPage />}
-          />
+          {/* Open routes (not protected) */}
           <Route
             path='/signup'
-            element={<SignUp />}
+            element={<SignupLogin />}
           />
           <Route
             path='/login'
-            element={<Login />}
+            element={<SignupLogin />}
+          />
+
+          {/* Protected routes */}
+          <Route
+            path='/'
+            element={<ProtectedRoute element={<Home />} />}
+          />
+          <Route
+            path='/about'
+            element={<ProtectedRoute element={<About />} />}
+          />
+          <Route
+            path='/explore'
+            element={<ProtectedRoute element={<Explore />} />}
+          />
+          <Route
+            path='/user/:userId'
+            element={<ProtectedRoute element={<UserPage />} />}
           />
         </Routes>
       </Layout>

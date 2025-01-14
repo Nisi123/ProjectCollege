@@ -1,20 +1,27 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useParams } from "react-router-dom";
 
 const UserProfile = () => {
-  const { userId } = useParams(); // Get userId from URL params
+  const navigate = useNavigate();
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem("user"));
+    if (!userData) {
+      navigate("/login"); // Redirect to login if no user data is found
+      return;
+    }
+
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/users/${userId}`
+          `http://localhost:8000/users/${userData.userId}`
         );
-        setUser(response.data);
+        setUser(response.data); // Set the user info
       } catch (err) {
         setError("User not found or error fetching data.");
       } finally {
@@ -23,7 +30,14 @@ const UserProfile = () => {
     };
 
     fetchUserData();
-  }, [userId]);
+  }, [navigate]);
+
+  const logout = () => {
+    // Clear user info and token from localStorage
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    navigate("/login"); // Redirect to login page
+  };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
@@ -49,6 +63,7 @@ const UserProfile = () => {
       ) : (
         <p>No projects available.</p>
       )}
+      <button onClick={logout}>Logout</button> {/* Logout button */}
     </div>
   );
 };

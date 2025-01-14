@@ -1,11 +1,9 @@
-function Login() {
+const login = () => {
   return (
     <>
-      <div>
-        <h1>Login</h1>
-      </div>
+      <h1>Login</h1>
     </>
   );
-}
+};
 
-export default Login;
+export default login;

@@ -467,6 +467,106 @@
   --ButtonBorderRadius: 0.7rem;
 }
 
+.signupContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80vw;
+  height: 80vh;
+  margin-left: 10%;
+  margin-top: 5%;
+  border-radius: 1rem;
+  box-shadow: 0px 0px 35px -18px var(--MainBgColor);
+}
+
+.signupFormContainer,
+.signupIllustration {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.signupFormContainer {
+  align-items: start !important;
+  padding-left: 10rem;
+}
+
+.signupFormContainer h1 {
+  font-size: var(--MainTitleFontSize);
+  font-weight: var(--MainTitleFontWeight);
+  color: var(--MainBgColor);
+  margin-bottom: 0rem;
+}
+
+.signupFormContainer p {
+  font-size: var(--MainParagraphFontSize);
+  font-weight: var(--MainParagraphFontWeight);
+  margin-top: 1rem;
+}
+
+.signupIllustration img {
+  width: 100%;
+  height: 70%;
+}
+
+.signupForm {
+  display: flex;
+  flex-flow: column;
+}
+
+.signupForm input {
+  height: 3rem;
+  border-radius: 0.5rem;
+  padding: 0rem 1rem;
+  font-size: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.169);
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+  box-shadow: 0px 0px 20px -18px;
+  font-family: inter;
+  margin-bottom: 1rem;
+}
+
+.signupForm input::-moz-placeholder {
+  font-size: 0.8rem;
+}
+
+.signupForm input::placeholder {
+  font-size: 0.8rem;
+}
+
+.signupForm input:hover {
+  box-shadow: 0px 0px 30px -18px;
+}
+
+.signupForm button {
+  height: 3rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  border: none;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+  box-shadow: 0px 0px 20px -18px;
+  font-family: inter;
+  margin-top: 1rem;
+}
+
+.signupForm button:hover {
+  box-shadow: 0px 0px 30px -18px;
+}
+
+.signupForm button:active {
+  transform: scale(0.95);
+}
+
+p span a {
+  color: var(--MainBgColor);
+  text-decoration: none;
+}
+
 body {
   margin: 0;
   font-family: inter;

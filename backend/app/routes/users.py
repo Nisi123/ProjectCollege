@@ -4,6 +4,8 @@ from app.database import get_db
 from bson import ObjectId
 from typing import List
 from app.services.user_service import create_user, login_user, get_all_users, get_user_by_id
+from pydantic import BaseModel
+
 
 router = APIRouter()
 
@@ -30,9 +32,13 @@ async def sign_up(user: User):
         raise HTTPException(status_code=400, detail="Email already registered")
     return await create_user(user)
 
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
 @router.post("/login", response_model=UserInDB)
-async def login(email: str, password: str):
-    user = await login_user(email, password)
+async def login(request: LoginRequest):
+    user = await login_user(request.email, request.password)
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     return user
