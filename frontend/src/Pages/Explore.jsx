@@ -103,7 +103,7 @@ const Explore = () => {
             >
               <h2>{project.name}</h2>
               <p>{project.description}</p>
-              <p>Submitted by: {project.user_associated}</p>
+              <p>{project.user_associated}</p>
               <p>Likes: {project.like_count}</p>
             </div>
           ))

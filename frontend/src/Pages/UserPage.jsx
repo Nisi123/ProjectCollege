@@ -77,6 +77,8 @@ const UserProfile = () => {
     page * itemsPerPage
   );
 
+  console.log(user);
+
   return (
     <div className='userpage'>
       <div className='userpageMainHeader'>
@@ -122,7 +124,7 @@ const UserProfile = () => {
               />
               <h2>{project.name}</h2>
               <p>{project.description}</p>
-              <p>Likes: {project.like_count}</p>
+              <p>Likes: {project.like_count || 0}</p>
             </div>
           ))
         ) : (

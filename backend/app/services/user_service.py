@@ -1,7 +1,7 @@
 # app/services/user_service.py
 from bson import ObjectId
 from app.database import get_db
-from app.models.user import UserInDB, User
+from app.models.user import UserInDB, User, UserInDBResponse
 from pydantic import BaseModel
 from passlib.context import CryptContext
 from typing import Optional
@@ -43,12 +43,25 @@ async def get_user_by_email(email: str) -> Optional[UserInDB]:
     db = get_db()
     user = db["users"].find_one({"email": email})
     print(f"get_user_by_email - Fetched user: {user}")
-    if user:
-        user["id"] = str(user["_id"])  # Add the id field
-        print(f"User fetched: {user}")  # Debugging line
-        return UserInDB(**user)
-    print("User not found")
-    return None
+
+    if not user:
+        print("User not found")
+        return None
+    # Add the id field
+    user["id"] = str(user["_id"])
+    # Fetch associated projects and include required fields
+    projects = list(db["projects"].find({"user_associated": user["username"]}))
+    user["projects"] = [
+        {
+            "id": str(project["_id"]),
+            "name": project.get("name", ""),
+            "description": project.get("description", ""),
+            "project_pic": project.get("project_pic", "No Image"),
+            "like_count": project.get("like_count", 0),
+        }
+        for project in projects
+    ]
+    return UserInDB(**user)
 
 async def login_user(email: str, password: str) -> Optional[UserInDB]:
     user = await get_user_by_email(email)
@@ -71,7 +84,8 @@ async def get_user_by_id(user_id: str) -> Optional[UserInDB]:
         return None
     user["id"] = str(user["_id"])
     projects = list(db["projects"].find({"user_associated": user["username"]}))
-    user["projects"] = [{"id": str(project["_id"]), "name": project["name"]} for project in projects]
+    user["projects"] = [{"id": str(project["_id"]), "name": project["name"], "description": project.get("description", ""), "like_count": project.get("like_count", 0)} for project in projects]
+    print(f"User with projects: {user}")  # Debugging line
     return UserInDB(**user)
 
 async def get_all_users() -> list[UserInDB]:
@@ -90,3 +104,17 @@ async def get_all_users() -> list[UserInDB]:
         user_list.append(UserInDB(**user))
     
     return user_list
+
+async def update_user_profile(user_id: str, update_data: dict):
+    db = get_db()
+    user = db["users"].find_one({"_id": ObjectId(user_id)})
+
+    if not user:
+        return None
+
+    db["users"].update_one({"_id": ObjectId(user_id)}, {"$set": update_data})
+    updated_user = db["users"].find_one({"_id": ObjectId(user_id)})
+    updated_user["id"] = str(updated_user["_id"])
+    del updated_user["_id"]
+
+    return updated_user

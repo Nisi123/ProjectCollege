@@ -15,6 +15,8 @@ class User(BaseModel):
 class Project(BaseModel):
     id: str
     name: str
+    description: Optional[str] = ""
+    like_count: int = 0
 
 class UserInDB(User):
     id: str

@@ -38,7 +38,6 @@ const Navbar = ({ userId }) => {
 };
 
 Navbar.propTypes = {
-  username: PropTypes.string.isRequired,
   userId: PropTypes.string.isRequired,
 };
 
