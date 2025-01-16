@@ -158,6 +158,9 @@ const UserProfile = () => {
       </div>
 
       <button onClick={logout}>Logout</button>
+      <button onClick={() => navigate("/complete-profile")}>
+        Complete Your Profile
+      </button>
     </div>
   );
 };

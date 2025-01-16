@@ -7,6 +7,7 @@ import Layout from "./components/Layout/Layout";
 import UserPage from "./Pages/UserPage";
 import SignupLogin from "./Pages/Signup";
 import ProtectedRoute from "./Services/protectedRoute"; // Import ProtectedRoute
+import ParentComponent from "./Components/ParentComponent"; // Import ParentComponent
 
 function App() {
   return (
@@ -39,6 +40,10 @@ function App() {
           <Route
             path='/user/:userId'
             element={<ProtectedRoute element={<UserPage />} />}
+          />
+          <Route
+            path='/complete-profile'
+            element={<ParentComponent />}
           />
         </Routes>
       </Layout>

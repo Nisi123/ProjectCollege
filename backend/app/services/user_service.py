@@ -118,3 +118,4 @@ async def update_user_profile(user_id: str, update_data: dict):
     del updated_user["_id"]
 
     return updated_user
+
