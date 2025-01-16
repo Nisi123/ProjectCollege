@@ -21,6 +21,10 @@
   text-decoration: none;
 }
 
+.navbarImage img {
+  height: 2rem;
+}
+
 /* Footer */
 .footer {
   background-color: var(--MainBgColor);
@@ -633,6 +637,65 @@ p span a {
 
 .UserPageProjectsContainer {
   margin: 2rem 5rem 0rem 5rem;
+}
+
+.completeProfileTitle {
+  font-size: var(--MainTitleFontSize);
+  font-weight: var(--MainTitleFontWeight);
+  color: var(--MainBgColor);
+  margin-left: 5rem;
+  margin-top: 2rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+form input {
+  height: 3rem;
+  border-radius: 0.5rem;
+  padding: 0rem 1rem;
+  font-size: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.169);
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+  box-shadow: 0px 0px 20px -18px;
+  font-family: inter;
+  width: 20rem;
+}
+
+form input::-moz-placeholder {
+  font-size: 0.8rem;
+}
+
+form input::placeholder {
+  font-size: 0.8rem;
+}
+
+form input:hover {
+  box-shadow: 0px 0px 30px -18px;
+}
+
+form button {
+  font-size: var(--ButtonFontSize);
+  padding: var(--ButtonPadding);
+  border-radius: var(--ButtonBorderRadius);
+  background: var(--MainBgColor);
+  color: white;
+  cursor: pointer;
+  margin-top: 2rem;
+  box-shadow: 0px 0px 30px -18px;
+  border: 2px solid var(--MainBgColor);
+}
+
+form button:hover {
+  color: var(--MainBgColor);
+  background: transparent;
+  box-shadow: 0px 0px 20px -18px;
 }
 
 body {

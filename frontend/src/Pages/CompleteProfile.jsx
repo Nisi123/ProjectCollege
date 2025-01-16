@@ -42,21 +42,10 @@ const CompleteProfile = ({ userId }) => {
 
   return (
     <div>
-      <h1>Complete Your Profile</h1>
+      <h1 className='completeProfileTitle'>Update Your Profile</h1>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor='description'>Description:</label>
-          <input
-            type='text'
-            id='description'
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder='Enter a description'
-          />
-        </div>
-
-        <div>
-          <label htmlFor='position'>Position:</label>
+          <h3>Position</h3>
           <input
             type='text'
             id='position'
@@ -65,9 +54,8 @@ const CompleteProfile = ({ userId }) => {
             placeholder='Enter your position'
           />
         </div>
-
         <div>
-          <label htmlFor='yearOfBirth'>Year of Birth:</label>
+          <h3>Birth Year</h3>{" "}
           <input
             type='number'
             id='yearOfBirth'
@@ -76,9 +64,8 @@ const CompleteProfile = ({ userId }) => {
             placeholder='Enter your year of birth'
           />
         </div>
-
         <div>
-          <label htmlFor='level'>Level:</label>
+          <h3>Study Level</h3>
           <input
             type='text'
             id='level'
@@ -87,7 +74,16 @@ const CompleteProfile = ({ userId }) => {
             placeholder='Enter your level'
           />
         </div>
-
+        <div>
+          <h3>Description</h3>
+          <input
+            type='text'
+            id='description'
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder='Enter a description'
+          />
+        </div>
         <button type='submit'>Save</button>
       </form>
 
