@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { IoMdSettings } from "react-icons/io";
 
 const UserProfile = () => {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ const UserProfile = () => {
   const [itemsPerPage] = useState(10); // Number of projects per page
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isModalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("user"));
@@ -79,8 +81,43 @@ const UserProfile = () => {
 
   console.log(user);
 
+  const openModal = () => setModalOpen(true);
+  const closeModal = () => setModalOpen(false);
+  const navigator = (path) => {
+    console.log(`Navigate to ${path}`);
+    closeModal(); // Close the modal after navigation
+  };
+  const loggingout = () => {
+    console.log("Logging out...");
+    closeModal(); // Close the modal after logging out
+  };
+
   return (
     <div className='userpage'>
+      <div>
+        <IoMdSettings
+          className='settingsButton'
+          onClick={openModal}
+        />
+
+        {isModalOpen && (
+          <div className='modalOverlay'>
+            <div className='modal'>
+              <h2>Settings</h2>
+              <button onClick={() => navigate("/complete-profile")}>
+                Edit
+              </button>
+              <button onClick={logout}>Logout</button>
+              <button
+                onClick={closeModal}
+                className='closeButton'
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
       <div className='userpageMainHeader'>
         <img src={user.profile_pic} />
         <h1>{user.username}</h1>
@@ -156,11 +193,6 @@ const UserProfile = () => {
           Next
         </button>
       </div>
-
-      <button onClick={logout}>Logout</button>
-      <button onClick={() => navigate("/complete-profile")}>
-        Complete Your Profile
-      </button>
     </div>
   );
 };
