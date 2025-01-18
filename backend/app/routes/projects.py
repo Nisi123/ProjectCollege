@@ -1,29 +1,68 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, File, UploadFile, Form
 from app.models.project import Project, ProjectInDB
 from app.database import get_db
 from bson import ObjectId
-from typing import List
+from typing import List, Optional
+from datetime import datetime
+import os
 
 router = APIRouter()
 
 @router.post("/", response_model=ProjectInDB)
-async def create_project(project: Project):
+async def create_project(
+    name: str = Form(...),
+    description: str = Form(...),
+    user_associated: str = Form(...),
+    project_url: Optional[str] = Form(None),
+    project_pic: Optional[UploadFile] = File(None)
+):
     db = get_db()
-
+    
     # Check if the user exists
-    user = db.users.find_one({"username": project.user_associated})
+    user = db.users.find_one({"username": user_associated})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    # Create project object and insert it into the database
-    project_dict = project.dict()
-    project_dict["like_count"] = 0  # Ensure like_count is initialized to 0
+    project_dict = {
+        "name": name,
+        "description": description,
+        "user_associated": user_associated,
+        "project_url": project_url,
+        "time_submitted": datetime.now().isoformat(),
+        "reviews": [],
+        "like_count": 0
+    }
+
+    # Handle project picture upload
+    if project_pic:
+        timestamp = int(datetime.now().timestamp())
+        safe_filename = f"project_{timestamp}_{project_pic.filename.replace(' ', '_')}"
+        file_location = f"uploads/{safe_filename}"
+        
+        try:
+            with open(file_location, "wb+") as file_object:
+                content = await project_pic.read()
+                file_object.write(content)
+            # Store the full URL with timestamp
+            project_dict["project_pic"] = f"http://localhost:8000/{file_location}?t={timestamp}"
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Could not upload file: {e}")
+    else:
+        timestamp = int(datetime.now().timestamp())
+        project_dict["project_pic"] = f"http://localhost:8000/uploads/default-project-pic.png?t={timestamp}"
     
     result = db.projects.insert_one(project_dict)
+    created_project = db.projects.find_one({"_id": result.inserted_id})
+    created_project["id"] = str(created_project["_id"])
     
-    project_in_db = ProjectInDB(**project_dict, id=str(result.inserted_id))
-    
-    return project_in_db
+    return ProjectInDB(**created_project)
+
+# Add this helper function to format project data
+def format_project_data(project):
+    """Format project data with full URLs for images"""
+    if project.get("project_pic"):
+        project["project_pic"] = f"http://localhost:8000/{project['project_pic']}"
+    return project
 
 @router.get("/{project_id}", response_model=ProjectInDB)
 async def get_project(project_id: str):
@@ -36,7 +75,7 @@ async def get_project(project_id: str):
         raise HTTPException(status_code=404, detail="Project not found")
     
     project_data["id"] = str(project_data["_id"])  # Map MongoDB _id to 'id'
-    return ProjectInDB(**project_data)
+    return ProjectInDB(**format_project_data(project_data))
 
 @router.get("/", response_model=dict)
 async def get_all_projects(skip: int = 0, limit: int = 20, sort: str = "like_count"):

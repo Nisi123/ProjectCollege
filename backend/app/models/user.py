@@ -17,6 +17,8 @@ class Project(BaseModel):
     name: str
     description: Optional[str] = ""
     like_count: int = 0
+    project_pic: Optional[str] = None  # Add this field
+    project_url: Optional[str] = None  # Add this field too
 
 class UserInDB(User):
     id: str

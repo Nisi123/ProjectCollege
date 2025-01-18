@@ -9,7 +9,17 @@ const CompleteProfile = ({ userId }) => {
   const [yearOfBirth, setYearOfBirth] = useState("");
   const [level, setLevel] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [profilePic, setProfilePic] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState("");
   const navigate = useNavigate();
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setProfilePic(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent page reload on form submission
@@ -22,17 +32,22 @@ const CompleteProfile = ({ userId }) => {
       return;
     }
 
-    const payload = {};
-
-    if (description) payload.description = description;
-    if (position) payload.position = position;
-    if (yearOfBirth) payload.year_of_birth = parseInt(yearOfBirth, 10);
-    if (level) payload.level = level;
+    const formData = new FormData();
+    if (description) formData.append("description", description);
+    if (position) formData.append("position", position);
+    if (yearOfBirth) formData.append("year_of_birth", yearOfBirth);
+    if (level) formData.append("level", level);
+    if (profilePic) formData.append("profile_pic", profilePic);
 
     try {
       const response = await axios.put(
         `http://localhost:8000/users/complete-profile/${userId}`,
-        payload
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
       console.log("Profile updated successfully:", response.data);
 
@@ -60,6 +75,21 @@ const CompleteProfile = ({ userId }) => {
     <div>
       <h1 className='completeProfileTitle'>Update Your Profile</h1>
       <form onSubmit={handleSubmit}>
+        <div>
+          <h3>Profile Picture</h3>
+          <input
+            type='file'
+            accept='image/*'
+            onChange={handleImageChange}
+          />
+          {previewUrl && (
+            <img
+              src={previewUrl}
+              alt='Profile preview'
+              style={{ width: "200px", marginTop: "10px" }}
+            />
+          )}
+        </div>
         <div>
           <h3>Position</h3>
           <input

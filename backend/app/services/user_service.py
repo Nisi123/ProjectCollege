@@ -5,6 +5,7 @@ from app.models.user import UserInDB, User, UserInDBResponse
 from pydantic import BaseModel
 from passlib.context import CryptContext
 from typing import Optional
+from time import time
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -47,20 +48,34 @@ async def get_user_by_email(email: str) -> Optional[UserInDB]:
     if not user:
         print("User not found")
         return None
-    # Add the id field
+
     user["id"] = str(user["_id"])
-    # Fetch associated projects and include required fields
     projects = list(db["projects"].find({"user_associated": user["username"]}))
-    user["projects"] = [
-        {
+    
+    # Update project data format
+    user["projects"] = []
+    timestamp = int(time())
+    for project in projects:
+        project_data = {
             "id": str(project["_id"]),
-            "name": project.get("name", ""),
+            "name": project["name"],
             "description": project.get("description", ""),
-            "project_pic": project.get("project_pic", "No Image"),
+            "project_pic": None,
+            "project_url": project.get("project_url"),
             "like_count": project.get("like_count", 0),
         }
-        for project in projects
-    ]
+        
+        project_pic = project.get("project_pic")
+        if not project_pic:
+            project_data["project_pic"] = f"http://localhost:8000/uploads/default-project-pic.png?t={timestamp}"
+        else:
+            base_url = project_pic.split('?')[0]
+            if not base_url.startswith(("http://", "https://")):
+                base_url = f"http://localhost:8000/{base_url}"
+            project_data["project_pic"] = f"{base_url}?t={timestamp}"
+            
+        user["projects"].append(project_data)
+        
     return UserInDB(**user)
 
 async def login_user(email: str, password: str) -> Optional[UserInDB]:
@@ -82,10 +97,49 @@ async def get_user_by_id(user_id: str) -> Optional[UserInDB]:
     
     if user is None:
         return None
+
+    timestamp = int(time())
+        
+    # Handle profile picture path with proper URL formatting
+    if not user.get("profile_pic") or user["profile_pic"] == "No Profile Pic":
+        user["profile_pic"] = f"http://localhost:8000/uploads/default-profile-pic.png?t={timestamp}"
+    else:
+        profile_pic = user["profile_pic"]
+        if not profile_pic.startswith(("http://", "https://")):
+            user["profile_pic"] = f"http://localhost:8000/{profile_pic}?t={timestamp}"
+
     user["id"] = str(user["_id"])
     projects = list(db["projects"].find({"user_associated": user["username"]}))
-    user["projects"] = [{"id": str(project["_id"]), "name": project["name"], "description": project.get("description", ""), "like_count": project.get("like_count", 0)} for project in projects]
-    print(f"User with projects: {user}")  # Debugging line
+    timestamp = int(time())
+    
+    # Format project data with proper image URLs
+    user["projects"] = []
+    for project in projects:
+        project_data = {
+            "id": str(project["_id"]),
+            "name": project["name"],
+            "description": project.get("description", ""),
+            "like_count": project.get("like_count", 0),
+            "project_url": project.get("project_url"),
+            "project_pic": None  # Initialize project_pic
+        }
+        
+        # Add debug logging
+        print(f"Processing project: {project}")
+        
+        project_pic = project.get("project_pic")
+        if not project_pic:
+            project_data["project_pic"] = f"http://localhost:8000/uploads/default-project-pic.png?t={timestamp}"
+        else:
+            base_url = project_pic.split('?')[0]
+            if not base_url.startswith(("http://", "https://")):
+                base_url = f"http://localhost:8000/{base_url}"
+            project_data["project_pic"] = f"{base_url}?t={timestamp}"
+            
+        # Add debug logging
+        print(f"Processed project data: {project_data}")
+        user["projects"].append(project_data)
+    
     return UserInDB(**user)
 
 async def get_all_users() -> list[UserInDB]:
@@ -111,6 +165,10 @@ async def update_user_profile(user_id: str, update_data: dict):
 
     if not user:
         return None
+
+    # If there's a profile_pic in update_data, make sure it starts with 'uploads/'
+    if "profile_pic" in update_data and not update_data["profile_pic"].startswith("uploads/"):
+        update_data["profile_pic"] = f"uploads/{update_data['profile_pic']}"
 
     db["users"].update_one({"_id": ObjectId(user_id)}, {"$set": update_data})
     updated_user = db["users"].find_one({"_id": ObjectId(user_id)})

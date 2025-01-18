@@ -15,31 +15,46 @@ const UserProfile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isProjectModalOpen, setProjectModalOpen] = useState(false);
+  const [newProject, setNewProject] = useState({
+    name: "",
+    description: "",
+    time_submitted: new Date().toISOString(),
+    reviews: [],
+    project_url: "",
+    project_pic: null,
+  });
+  const [imageLoading, setImageLoading] = useState(true);
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("user"));
     if (!userData) {
-      navigate("/login"); // Redirect to login if no user data is found
+      navigate("/login");
       return;
     }
 
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8000/users/${userData.userId}`
-        );
-        setUser(response.data); // Set the user info
-        setFilteredProjects(response.data.projects); // Initialize filtered projects
-        setTotalPages(Math.ceil(response.data.projects.length / itemsPerPage)); // Calculate total pages
-      } catch (err) {
-        setError("User not found or error fetching data.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchUserData();
   }, [navigate, itemsPerPage]);
+
+  const fetchUserData = async () => {
+    try {
+      const userData = JSON.parse(localStorage.getItem("user"));
+      const response = await axios.get(
+        `http://localhost:8000/users/${userData.userId}`
+      );
+      console.log("User data received:", response.data);
+      setUser(response.data);
+      setFilteredProjects(response.data.projects || []);
+      setTotalPages(
+        Math.ceil((response.data.projects?.length || 0) / itemsPerPage)
+      );
+    } catch (err) {
+      console.error("Error fetching user data:", err);
+      setError("User not found or error fetching data.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const logout = () => {
     // Clear user info and token from localStorage
@@ -70,6 +85,46 @@ const UserProfile = () => {
     }
   };
 
+  const handleProjectSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const formData = new FormData();
+      formData.append("name", newProject.name);
+      formData.append("description", newProject.description);
+      formData.append("user_associated", user.username);
+
+      if (newProject.project_url) {
+        formData.append("project_url", newProject.project_url);
+      }
+
+      if (newProject.project_pic) {
+        formData.append("project_pic", newProject.project_pic);
+      }
+
+      await axios.post("http://localhost:8000/projects/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      // Refresh the projects list
+      await fetchUserData();
+
+      setProjectModalOpen(false);
+      setNewProject({
+        name: "",
+        description: "",
+        time_submitted: new Date().toISOString(),
+        reviews: [],
+        project_url: "",
+        project_pic: null,
+      });
+    } catch (error) {
+      console.error("Error creating project:", error);
+      alert("Failed to create project. Please try again.");
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
@@ -91,6 +146,77 @@ const UserProfile = () => {
   //   console.log("Logging out...");
   //   closeModal(); // Close the modal after logging out
   // };
+
+  // Update the image URL helper functions
+  const getImageUrl = (url) => {
+    if (!url || url === "No Profile Pic") {
+      return `http://localhost:8000/uploads/default-profile-pic.png?t=${Date.now()}`;
+    }
+
+    // Add cache-busting timestamp
+    const baseUrl = url.split("?")[0];
+    return `${baseUrl}?t=${Date.now()}`;
+  };
+
+  const getProjectImageUrl = (url) => {
+    if (!url) {
+      return `http://localhost:8000/uploads/default-project-pic.png?t=${Date.now()}`;
+    }
+
+    // Log the URL for debugging
+    console.log("Original project image URL:", url);
+
+    // Always add a timestamp to prevent caching
+    const timestamp = Date.now();
+    const baseUrl = url.split("?")[0];
+    const finalUrl = `${baseUrl}?t=${timestamp}`;
+
+    console.log("Final project image URL:", finalUrl);
+    return finalUrl;
+  };
+
+  // Add image loading handler
+  const handleImageLoad = () => {
+    setImageLoading(false);
+  };
+
+  // Update the project card rendering
+  const renderProjectCard = (project) => {
+    console.log("Rendering project:", project);
+    return (
+      <div
+        className='projectCard'
+        key={project.id}
+      >
+        <div className='projectImageContainer'>
+          <img
+            src={getProjectImageUrl(project.project_pic)}
+            alt={project.name}
+            className='projectImage'
+            onError={(e) => {
+              console.log("Image load error for:", project.project_pic);
+              e.target.src = getProjectImageUrl(null);
+            }}
+            loading='lazy'
+          />
+        </div>
+        <div className='projectInfo'>
+          <h2>{project.name}</h2>
+          <p>{project.description}</p>
+          {project.project_url && (
+            <a
+              href={project.project_url}
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              View Project
+            </a>
+          )}
+          <p>Likes: {project.like_count || 0}</p>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className='userpage'>
@@ -117,9 +243,88 @@ const UserProfile = () => {
             </div>
           </div>
         )}
+
+        <button
+          className='addProjectButton'
+          onClick={() => setProjectModalOpen(true)}
+        >
+          Add Project
+        </button>
+
+        {/* Project Creation Modal */}
+        {isProjectModalOpen && (
+          <div className='modalOverlay'>
+            <div className='modal'>
+              <h2>Create New Project</h2>
+              <form onSubmit={handleProjectSubmit}>
+                <input
+                  type='text'
+                  placeholder='Project Name'
+                  value={newProject.name}
+                  onChange={(e) =>
+                    setNewProject({ ...newProject, name: e.target.value })
+                  }
+                  required
+                />
+                <textarea
+                  placeholder='Project Description'
+                  value={newProject.description}
+                  onChange={(e) =>
+                    setNewProject({
+                      ...newProject,
+                      description: e.target.value,
+                    })
+                  }
+                  required
+                />
+                <input
+                  type='url'
+                  placeholder='Project URL (optional)'
+                  value={newProject.project_url || ""}
+                  onChange={(e) =>
+                    setNewProject({
+                      ...newProject,
+                      project_url: e.target.value,
+                    })
+                  }
+                />
+                <input
+                  type='file'
+                  accept='image/*'
+                  onChange={(e) =>
+                    setNewProject({
+                      ...newProject,
+                      project_pic: e.target.files[0],
+                    })
+                  }
+                />
+                <button type='submit'>Create Project</button>
+                <button
+                  type='button'
+                  onClick={() => setProjectModalOpen(false)}
+                >
+                  Cancel
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
       <div className='userpageMainHeader'>
-        <img src={user.profile_pic} />
+        <div className='imageContainer'>
+          {imageLoading && <div className='imagePlaceholder'>Loading...</div>}
+          <img
+            src={getImageUrl(user?.profile_pic)}
+            alt='Profile'
+            onLoad={handleImageLoad}
+            style={{ display: imageLoading ? "none" : "block" }}
+            onError={(e) => {
+              console.log("Profile image load error:", user?.profile_pic);
+              setImageLoading(false);
+              e.target.src = getImageUrl(null);
+            }}
+          />
+        </div>
         <h1>{user.username}</h1>
         <p>{user.position}</p>
       </div>
@@ -149,21 +354,7 @@ const UserProfile = () => {
       {/* Projects */}
       <div className='projectsContainer UserPageProjectsContainer'>
         {paginatedProjects.length > 0 ? (
-          paginatedProjects.map((project) => (
-            <div
-              className='projectCard'
-              key={project.id}
-            >
-              <img
-                src={project.project_pic}
-                alt={project.name}
-                className='projectImage'
-              />
-              <h2>{project.name}</h2>
-              <p>{project.description}</p>
-              <p>Likes: {project.like_count || 0}</p>
-            </div>
-          ))
+          paginatedProjects.map((project) => renderProjectCard(project))
         ) : (
           <p>No projects available.</p>
         )}
