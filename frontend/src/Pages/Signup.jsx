@@ -33,8 +33,8 @@ function SignupLogin() {
       if (isSignup) {
         alert("Signup successful! You can now log in.");
         setIsSignup(false);
-      } else {
-        // Store user info and token in localStorage
+
+        // Automatically login the user after successful signup
         const userData = {
           username: response.data.username,
           userId: response.data.id,
@@ -42,7 +42,19 @@ function SignupLogin() {
           profile_pic: response.data.profile_pic,
         };
         localStorage.setItem("user", JSON.stringify(userData)); // Store user info
+        localStorage.setItem("token", response.data.token); // Save token
 
+        // Redirect to user page after signup
+        navigate(`/user/${response.data.id}`);
+      } else {
+        // For login
+        const userData = {
+          username: response.data.username,
+          userId: response.data.id,
+          email: response.data.email,
+          profile_pic: response.data.profile_pic,
+        };
+        localStorage.setItem("user", JSON.stringify(userData)); // Store user info
         localStorage.setItem("token", response.data.token); // Save token
         navigate("/"); // Redirect to home page
       }

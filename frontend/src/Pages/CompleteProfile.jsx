@@ -14,6 +14,14 @@ const CompleteProfile = ({ userId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent page reload on form submission
 
+    const userData = JSON.parse(localStorage.getItem("user"));
+    const userId = userData?.userId;
+
+    if (!userId) {
+      setError("User not found, please login again.");
+      return;
+    }
+
     const payload = {};
 
     if (description) payload.description = description;
@@ -31,12 +39,20 @@ const CompleteProfile = ({ userId }) => {
       // Show success message
       setSuccessMessage("Profile updated successfully!");
 
+      // Update localStorage with new data after profile update (optional)
+      userData.description = response.data.description;
+      userData.position = response.data.position;
+      userData.year_of_birth = response.data.year_of_birth;
+      userData.level = response.data.level;
+      localStorage.setItem("user", JSON.stringify(userData)); // Update user info in localStorage
+
       // Redirect to user page after 1 second
       setTimeout(() => {
         navigate(`/user/${userId}`);
       }, 1000);
     } catch (error) {
       console.error("Error updating profile:", error);
+      setError("Error updating profile.");
     }
   };
 

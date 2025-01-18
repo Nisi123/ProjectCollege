@@ -83,14 +83,14 @@ const UserProfile = () => {
 
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
-  const navigator = (path) => {
-    console.log(`Navigate to ${path}`);
-    closeModal(); // Close the modal after navigation
-  };
-  const loggingout = () => {
-    console.log("Logging out...");
-    closeModal(); // Close the modal after logging out
-  };
+  // const navigator = (path) => {
+  //   console.log(`Navigate to ${path}`);
+  //   closeModal(); // Close the modal after navigation
+  // };
+  // const loggingout = () => {
+  //   console.log("Logging out...");
+  //   closeModal(); // Close the modal after logging out
+  // };
 
   return (
     <div className='userpage'>
