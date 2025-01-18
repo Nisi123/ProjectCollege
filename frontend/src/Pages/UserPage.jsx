@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { IoMdSettings } from "react-icons/io";
+import { IoMdSettings, IoMdExit } from "react-icons/io";
+import { IconContext } from "react-icons";
+import { IoTrashOutline, IoAdd, IoCloseCircleOutline } from "react-icons/io5";
 
 const UserProfile = () => {
   const navigate = useNavigate();
@@ -25,6 +27,11 @@ const UserProfile = () => {
     project_pic: null,
   });
   const [imageLoading, setImageLoading] = useState(true);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState(null);
+  const [selectedProjects, setSelectedProjects] = useState([]);
+  const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
+  const [isDeleteMode, setIsDeleteMode] = useState(false);
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("user"));
@@ -125,6 +132,60 @@ const UserProfile = () => {
     }
   };
 
+  const handleDeleteProfile = async () => {
+    try {
+      const userData = JSON.parse(localStorage.getItem("user"));
+      await axios.delete(`http://localhost:8000/users/${userData.userId}`);
+      logout(); // Use existing logout function to redirect to login
+    } catch (error) {
+      console.error("Error deleting profile:", error);
+      alert("Failed to delete profile. Please try again.");
+    }
+  };
+
+  const handleDeleteProject = async (projectId) => {
+    try {
+      await axios.delete(`http://localhost:8000/projects/${projectId}`);
+      await fetchUserData(); // Refresh the projects list
+      setProjectToDelete(null); // Close the confirmation modal
+    } catch (error) {
+      console.error("Error deleting project:", error);
+      alert("Failed to delete project. Please try again.");
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    try {
+      await Promise.all(
+        selectedProjects.map((projectId) =>
+          axios.delete(`http://localhost:8000/projects/${projectId}`)
+        )
+      );
+      await fetchUserData();
+      setSelectedProjects([]);
+      setShowBulkDeleteConfirm(false);
+    } catch (error) {
+      console.error("Error deleting projects:", error);
+      alert("Failed to delete some projects. Please try again.");
+    }
+  };
+
+  const handleProjectSelection = (projectId) => {
+    setSelectedProjects((prev) =>
+      prev.includes(projectId)
+        ? prev.filter((id) => id !== projectId)
+        : [...prev, projectId]
+    );
+  };
+
+  const toggleDeleteMode = () => {
+    setIsDeleteMode(!isDeleteMode);
+    if (isDeleteMode) {
+      // Clear selections when exiting delete mode
+      setSelectedProjects([]);
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
@@ -182,12 +243,25 @@ const UserProfile = () => {
 
   // Update the project card rendering
   const renderProjectCard = (project) => {
-    console.log("Rendering project:", project);
     return (
       <div
         className='projectCard'
         key={project.id}
       >
+        {isDeleteMode && (
+          <div className='projectHeader'>
+            <input
+              type='checkbox'
+              checked={selectedProjects.includes(project.id)}
+              onChange={() => handleProjectSelection(project.id)}
+              className='projectCheckbox'
+            />
+            <IoTrashOutline
+              className='deleteProjectIcon'
+              onClick={() => setProjectToDelete(project)}
+            />
+          </div>
+        )}
         <div className='projectImageContainer'>
           <img
             src={getProjectImageUrl(project.project_pic)}
@@ -235,6 +309,12 @@ const UserProfile = () => {
               </button>
               <button onClick={logout}>Logout</button>
               <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className='deleteButton'
+              >
+                Delete Profile
+              </button>
+              <button
                 onClick={closeModal}
                 className='closeButton'
               >
@@ -244,16 +324,36 @@ const UserProfile = () => {
           </div>
         )}
 
-        <button
-          className='addProjectButton'
-          onClick={() => setProjectModalOpen(true)}
-        >
-          Add Project
-        </button>
+        {/* Add Delete Confirmation Modal */}
+        {showDeleteConfirm && (
+          <div className='modalOverlay'>
+            <div className='modal'>
+              <h2>Confirm Delete</h2>
+              <p>
+                Are you sure you want to delete your profile? This cannot be
+                undone.
+              </p>
+              <div className='modalButtons'>
+                <button
+                  onClick={handleDeleteProfile}
+                  className='deleteConfirmButton'
+                >
+                  Confirm
+                </button>
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className='cancelButton'
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Project Creation Modal */}
         {isProjectModalOpen && (
-          <div className='modalOverlay'>
+          <div className='modalOverlay projectCreationModalOverlay'>
             <div className='modal'>
               <h2>Create New Project</h2>
               <form onSubmit={handleProjectSubmit}>
@@ -266,7 +366,7 @@ const UserProfile = () => {
                   }
                   required
                 />
-                <textarea
+                <input
                   placeholder='Project Description'
                   value={newProject.description}
                   onChange={(e) =>
@@ -289,6 +389,7 @@ const UserProfile = () => {
                   }
                 />
                 <input
+                  className='addImageForm'
                   type='file'
                   accept='image/*'
                   onChange={(e) =>
@@ -298,13 +399,15 @@ const UserProfile = () => {
                     })
                   }
                 />
-                <button type='submit'>Create Project</button>
-                <button
-                  type='button'
-                  onClick={() => setProjectModalOpen(false)}
-                >
-                  Cancel
-                </button>
+                <div className='projectCreateFormButton'>
+                  <button type='submit'>Create Project</button>
+                  <button
+                    type='button'
+                    onClick={() => setProjectModalOpen(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
               </form>
             </div>
           </div>
@@ -339,10 +442,41 @@ const UserProfile = () => {
         </div>
       </div>
       <hr />
-      <h1 className='projectsHeader'>Projects</h1>
+
+      <div className='projectsSectionHeader'>
+        <h1 className='projectsHeader'>Projects</h1>
+      </div>
 
       {/* Search Bar */}
       <div className='search-bar UserPageSearchBar'>
+        {isDeleteMode && selectedProjects.length > 0 && (
+          <button
+            className='bulkDeleteButton'
+            onClick={() => setShowBulkDeleteConfirm(true)}
+          >
+            Delete Selected ({selectedProjects.length})
+          </button>
+        )}
+        <button
+          className='addProjectButton'
+          onClick={() => setProjectModalOpen(true)}
+        >
+          <IoAdd /> Add Project
+        </button>
+        <button
+          className={`deleteProjectsButton ${isDeleteMode ? "active" : ""}`}
+          onClick={toggleDeleteMode}
+        >
+          {isDeleteMode ? (
+            <>
+              <IoCloseCircleOutline /> Exit Delete Mode
+            </>
+          ) : (
+            <>
+              <IoTrashOutline /> Delete Projects
+            </>
+          )}
+        </button>
         <input
           type='text'
           placeholder='Search projects...'
@@ -359,6 +493,57 @@ const UserProfile = () => {
           <p>No projects available.</p>
         )}
       </div>
+
+      {/* Add Project Delete Confirmation Modal */}
+      {projectToDelete && (
+        <div className='modalOverlay'>
+          <div className='modal'>
+            <h2>Delete Project</h2>
+            <p>Are you sure you want to delete "{projectToDelete.name}"?</p>
+            <div className='modalButtons'>
+              <button
+                onClick={() => handleDeleteProject(projectToDelete.id)}
+                className='deleteConfirmButton'
+              >
+                Delete
+              </button>
+              <button
+                onClick={() => setProjectToDelete(null)}
+                className='cancelButton'
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Delete Confirmation Modal */}
+      {showBulkDeleteConfirm && (
+        <div className='modalOverlay'>
+          <div className='modal'>
+            <h2>Delete Multiple Projects</h2>
+            <p>
+              Are you sure you want to delete {selectedProjects.length}{" "}
+              projects?
+            </p>
+            <div className='modalButtons'>
+              <button
+                onClick={handleBulkDelete}
+                className='deleteConfirmButton'
+              >
+                Delete All Selected
+              </button>
+              <button
+                onClick={() => setShowBulkDeleteConfirm(false)}
+                className='cancelButton'
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Pagination */}
       <div className='pagination'>

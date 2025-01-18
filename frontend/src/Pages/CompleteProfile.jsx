@@ -78,6 +78,7 @@ const CompleteProfile = ({ userId }) => {
         <div>
           <h3>Profile Picture</h3>
           <input
+            className='profilePictureForm'
             type='file'
             accept='image/*'
             onChange={handleImageChange}

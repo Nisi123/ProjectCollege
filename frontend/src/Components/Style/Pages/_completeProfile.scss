@@ -52,3 +52,21 @@ form button:hover {
   background: transparent;
   box-shadow: 0px 0px 20px -18px;
 }
+
+.profilePictureForm {
+  background: red;
+  border: none;
+  color: white;
+  border-radius: var(--ButtonBorderRadius);
+  cursor: pointer;
+}
+
+.profilePictureForm::file-selector-button {
+  background: red;
+  border: none;
+  color: white;
+  border-radius: var(--ButtonBorderRadius);
+  cursor: pointer;
+  padding: 0.8rem 2.5rem;
+  font-size: 1rem;
+}

@@ -96,3 +96,24 @@ async def complete_profile(
     if not updated_user:
         raise HTTPException(status_code=404, detail="User not found")
     return updated_user
+
+@router.delete("/{user_id}")
+async def delete_user(user_id: str):
+    """Delete a user and all their projects"""
+    db = get_db()
+    
+    # First check if user exists
+    user = db.users.find_one({"_id": ObjectId(user_id)})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Delete all projects associated with the user
+    db.projects.delete_many({"user_associated": user["username"]})
+    
+    # Delete the user
+    result = db.users.delete_one({"_id": ObjectId(user_id)})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    return {"message": "User and associated projects deleted successfully"}

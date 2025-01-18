@@ -138,3 +138,30 @@ async def get_top_projects():
     ]
 
     return top_projects_list
+
+@router.delete("/{project_id}")
+async def delete_project(project_id: str):
+    """Delete a project"""
+    db = get_db()
+    
+    # Check if project exists
+    project = db.projects.find_one({"_id": ObjectId(project_id)})
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    # Delete project image if it exists and isn't the default
+    if project.get("project_pic") and "default-project-pic" not in project["project_pic"]:
+        try:
+            file_path = project["project_pic"].split("http://localhost:8000/")[1].split("?")[0]
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        except Exception as e:
+            print(f"Error deleting project image: {e}")
+    
+    # Delete the project
+    result = db.projects.delete_one({"_id": ObjectId(project_id)})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Project not found")
+        
+    return {"message": "Project deleted successfully"}

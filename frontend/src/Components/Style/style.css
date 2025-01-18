@@ -719,7 +719,7 @@ p span a {
   margin-top: 1rem;
   padding: 1rem;
   border: 2px solid var(--MainBgColor);
-  border-radius: 5px;
+  border-radius: var(--ButtonBorderRadius);
   cursor: pointer;
   font-size: 1rem;
   background: var(--MainBgColor);
@@ -742,6 +742,109 @@ p span a {
 .closeButton:hover {
   background: transparent !important;
   color: #f44336 !important;
+}
+
+.modalButtons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.UserPageSearchBar .deleteProjectsButton {
+  background: #f44336;
+  border: none;
+  color: white;
+  border-radius: var(--ButtonBorderRadius);
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 2px solid red;
+}
+
+.UserPageSearchBar .deleteProjectsButton:hover {
+  background: transparent;
+  color: red;
+  border: 2px solid red;
+  box-shadow: 0px 0px 20px -18px;
+  transition: all 0.3s ease;
+}
+
+.UserPageSearchBar .active {
+  background: transparent !important;
+  color: red;
+  border: 2px solid red;
+  box-shadow: 0px 0px 20px -18px;
+  transition: all 0.3s ease;
+}
+
+.UserPageSearchBar .addProjectButton {
+  background: var(--MainBgColor);
+  border: none;
+  color: white;
+  border-radius: var(--ButtonBorderRadius);
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 2px solid blue;
+}
+
+.UserPageSearchBar .addProjectButton:hover {
+  background: transparent;
+  color: var(--MainBgColor);
+  border: 2px solid blue;
+  box-shadow: 0px 0px 20px -18px;
+  transition: all 0.3s ease;
+}
+
+.bulkDeleteButton {
+  background: #f44336;
+  border: none;
+  color: white;
+  border-radius: var(--ButtonBorderRadius);
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 2px solid red;
+}
+
+.projectCreationModalOverlay {
+  z-index: 2;
+}
+
+.modal {
+  padding: 2rem 5rem;
+}
+
+.modal h2 {
+  color: var(--MainBgColor);
+}
+
+.modal form {
+  gap: 1rem;
+}
+
+.addImageForm {
+  background: red;
+  border: none;
+  color: white;
+  border-radius: var(--ButtonBorderRadius);
+  cursor: pointer;
+}
+
+.addImageForm::file-selector-button {
+  background: red;
+  border: none;
+  color: white;
+  border-radius: var(--ButtonBorderRadius);
+  cursor: pointer;
+  padding: 0.8rem 2.5rem;
+  font-size: 1rem;
+}
+
+.projectCreateFormButton {
+  display: flex;
+  gap: 1rem;
 }
 
 .completeProfileTitle {
@@ -801,6 +904,24 @@ form button:hover {
   color: var(--MainBgColor);
   background: transparent;
   box-shadow: 0px 0px 20px -18px;
+}
+
+.profilePictureForm {
+  background: red;
+  border: none;
+  color: white;
+  border-radius: var(--ButtonBorderRadius);
+  cursor: pointer;
+}
+
+.profilePictureForm::file-selector-button {
+  background: red;
+  border: none;
+  color: white;
+  border-radius: var(--ButtonBorderRadius);
+  cursor: pointer;
+  padding: 0.8rem 2.5rem;
+  font-size: 1rem;
 }
 
 body {
