@@ -121,7 +121,8 @@ async def get_user_by_id(user_id: str) -> Optional[UserInDB]:
             "description": project.get("description", ""),
             "like_count": project.get("like_count", 0),
             "project_url": project.get("project_url"),
-            "project_pic": None  # Initialize project_pic
+            "project_pic": None,  # Initialize project_pic
+            "reviews": project.get("reviews", [])  # Add reviews to project data
         }
         
         # Add debug logging

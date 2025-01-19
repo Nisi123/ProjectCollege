@@ -19,6 +19,7 @@ class Project(BaseModel):
     like_count: int = 0
     project_pic: Optional[str] = None  # Add this field
     project_url: Optional[str] = None  # Add this field too
+    reviews: List[str] = []  # Make sure reviews are included in the model
 
 class UserInDB(User):
     id: str

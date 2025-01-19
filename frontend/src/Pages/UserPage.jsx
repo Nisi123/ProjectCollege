@@ -2,9 +2,15 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { IoMdSettings } from "react-icons/io";
-import { IoTrashOutline, IoAdd, IoCloseCircleOutline } from "react-icons/io5";
+import {
+  IoTrashOutline,
+  IoAdd,
+  IoCloseCircleOutline,
+  IoClose,
+} from "react-icons/io5";
 import { FaHeart } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
+import { FaLink } from "react-icons/fa6";
 
 const UserProfile = () => {
   const navigate = useNavigate();
@@ -33,6 +39,7 @@ const UserProfile = () => {
   const [selectedProjects, setSelectedProjects] = useState([]);
   const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("user"));
@@ -187,6 +194,10 @@ const UserProfile = () => {
     }
   };
 
+  const openProjectDetails = (project) => {
+    setSelectedProject(project);
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
@@ -248,6 +259,7 @@ const UserProfile = () => {
       <div
         className='projectCard'
         key={project.id}
+        onClick={() => !isDeleteMode && openProjectDetails(project)}
       >
         {isDeleteMode && (
           <div className='projectDeleteByCheckbox'>
@@ -553,6 +565,76 @@ const UserProfile = () => {
               >
                 Cancel
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Project Details Modal */}
+      {selectedProject && (
+        <div className='modalOverlay projectDetailsModalOverlay'>
+          <div className='modal projectDetailsModal'>
+            <button
+              onClick={() => setSelectedProject(null)}
+              className='closeButton'
+            >
+              <IoClose />
+            </button>
+            <div className='projectDetailsContent'>
+              <div className='projectDetailsImage'>
+                <img
+                  src={getProjectImageUrl(selectedProject.project_pic)}
+                  alt={selectedProject.name}
+                  onError={(e) => {
+                    e.target.src = getProjectImageUrl(null);
+                  }}
+                />
+              </div>
+              <div className='projectDetailsHeader'>
+                <h2>{selectedProject.name}</h2>
+                <div className='likesCount'>
+                  <FaHeart />
+                  <span>{selectedProject.like_count || 0}</span>
+                </div>
+              </div>
+              <div className='projectDetailsInfo'>
+                <p className='projectDescription'>
+                  {selectedProject.description}
+                </p>
+                <div>
+                  {selectedProject.project_url && (
+                    <a
+                      href={selectedProject.project_url}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='projectUrl'
+                    >
+                      View Project
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              <div className='projectReviews'>
+                <h3>Reviews</h3>
+                <div className='reviewsContainer'>
+                  {selectedProject.reviews &&
+                  selectedProject.reviews.length > 0 ? (
+                    <div className='reviewsList'>
+                      {selectedProject.reviews.map((review, index) => (
+                        <div
+                          key={index}
+                          className='reviewItem'
+                        >
+                          <p>{review}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className='noReviews'>No reviews yet</p>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>

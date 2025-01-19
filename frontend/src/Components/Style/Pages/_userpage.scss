@@ -329,7 +329,7 @@
   display: flex;
   color: red;
   align-items: center;
-  width: 2.5rem;
+  width: 3.5rem;
 }
 
 .projectDeleteByCheckbox {
@@ -353,4 +353,87 @@
 
 .deleteProjectIcon:hover {
   color: red;
+}
+
+.projectDetailsModal {
+  overflow: hidden;
+  padding-bottom: 3rem;
+}
+
+.projectDetailsModal .closeButton {
+  position: absolute;
+  top: 2rem;
+  right: 27rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem !important;
+  background: transparent !important;
+  color: var(--MainBgColor) !important;
+  border: none !important;
+  font-size: 2rem;
+}
+
+.projectDetailsImage img {
+  height: 20rem;
+  width: 100%;
+  border: none;
+}
+
+.projectDetailsModal {
+  width: 30rem;
+  height: 40rem;
+  text-align: left;
+}
+
+.projectDetailsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.likesCount {
+  font-size: 1.2rem;
+  color: red;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+.projectDetailsInfo p {
+  font-size: 1rem;
+  margin: 0;
+  color: rgba(0, 0, 0, 0.686);
+}
+
+.projectDetailsHeader h2 {
+  color: black;
+}
+
+.projectUrl {
+  color: blue;
+  text-decoration: none;
+}
+
+.projectDetailsInfo div {
+  margin-top: 1rem;
+}
+
+.reviewsList {
+  overflow-y: scroll;
+}
+
+.reviewsList::-webkit-scrollbar {
+  background: rgb(237, 237, 237);
+  border-radius: 2rem;
+}
+
+.reviewItem {
+  color: rgba(0, 0, 0, 0.686);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.097);
+  width: 95%;
+}
+
+.noReviews {
+  color: rgba(0, 0, 0, 0.686);
 }
