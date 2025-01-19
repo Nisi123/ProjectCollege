@@ -28,7 +28,6 @@
 
 .userpageDescriptionContainer {
   display: flex;
-  height: 10rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -42,27 +41,30 @@
   text-align: center;
 }
 
+.userpageDescriptionUserDescription p {
+  color: rgba(0, 0, 0, 0.686);
+}
+
 .userpageDescriptionUserInfo {
   display: flex;
   justify-content: end;
   align-items: center;
   gap: 2rem;
   font-size: 0.8rem;
+  color: rgba(0, 0, 0, 0.686);
 }
 
 .UserPageSearchBar {
   margin-right: 13rem;
+  margin-top: 2rem;
 }
 
 .projectsHeader {
   font-size: var(--MainTitleFontSize);
   font-weight: var(--MainTitleFontWeight);
   color: var(--MainBgColor);
-  margin: 5rem 0rem 2rem 13rem;
-}
-
-.UserPageProjectsContainer {
-  margin: 2rem 5rem 0rem 5rem;
+  margin: 2rem 0rem 2rem 13rem;
+  display: none;
 }
 
 .editButton {
@@ -129,6 +131,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 2;
 }
 
 .modal {
@@ -272,4 +275,82 @@
 .projectCreateFormButton {
   display: flex;
   gap: 1rem;
+}
+
+.projectCard {
+  border: 2px solid rgba(0, 0, 0, 0.15) !important;
+  position: relative;
+}
+
+.projectInfo {
+  display: flex;
+  flex-flow: column;
+  width: 100%;
+  // border: 2px solid black;
+}
+
+.projectImageContainer {
+  height: 65%;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.269);
+}
+
+.projectInfoTitleandLike {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0rem 0.5rem;
+}
+
+.projectInfoTitleandLike h2 {
+  font-size: 1rem;
+}
+
+.projectInfo p {
+  color: rgba(0, 0, 0, 0.686);
+  font-size: 0.8rem;
+  margin: 0;
+  padding: 0rem 0.5rem;
+  // border: 2px solid black;
+}
+
+.UserPageProjectsContainer {
+  margin: 3rem 5rem 0rem 5rem;
+  justify-content: left;
+  gap: 1.5rem;
+  padding-left: 1rem;
+}
+
+.projectInfoTitleandLike p {
+  font-size: 1rem;
+}
+
+.projectInfoTitleandLike div {
+  display: flex;
+  color: red;
+  align-items: center;
+  width: 2.5rem;
+}
+
+.projectDeleteByCheckbox {
+  position: absolute;
+  width: 89%;
+  padding: 1rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  background: white;
+  font-size: 1.2rem;
+}
+
+.projectCheckbox {
+  height: 1rem;
+  width: 1rem;
+}
+
+.deleteProjectIcon {
+  cursor: pointer;
+}
+
+.deleteProjectIcon:hover {
+  color: red;
 }

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { IoMdSettings, IoMdExit } from "react-icons/io";
-import { IconContext } from "react-icons";
+import { IoMdSettings } from "react-icons/io";
 import { IoTrashOutline, IoAdd, IoCloseCircleOutline } from "react-icons/io5";
+import { FaHeart } from "react-icons/fa6";
+import { FaTrash } from "react-icons/fa";
 
 const UserProfile = () => {
   const navigate = useNavigate();
@@ -249,19 +250,20 @@ const UserProfile = () => {
         key={project.id}
       >
         {isDeleteMode && (
-          <div className='projectHeader'>
+          <div className='projectDeleteByCheckbox'>
             <input
               type='checkbox'
               checked={selectedProjects.includes(project.id)}
               onChange={() => handleProjectSelection(project.id)}
               className='projectCheckbox'
             />
-            <IoTrashOutline
+            <FaTrash
               className='deleteProjectIcon'
               onClick={() => setProjectToDelete(project)}
             />
           </div>
         )}
+
         <div className='projectImageContainer'>
           <img
             src={getProjectImageUrl(project.project_pic)}
@@ -274,10 +276,18 @@ const UserProfile = () => {
             loading='lazy'
           />
         </div>
+
         <div className='projectInfo'>
-          <h2>{project.name}</h2>
+          <div className='projectInfoTitleandLike'>
+            <h2>{project.name}</h2>
+            <div>
+              <FaHeart />
+              <p>{project.like_count || 0}</p>
+            </div>
+          </div>
+
           <p>{project.description}</p>
-          {project.project_url && (
+          {/* {project.project_url && (
             <a
               href={project.project_url}
               target='_blank'
@@ -285,8 +295,7 @@ const UserProfile = () => {
             >
               View Project
             </a>
-          )}
-          <p>Likes: {project.like_count || 0}</p>
+          )} */}
         </div>
       </div>
     );
@@ -358,6 +367,7 @@ const UserProfile = () => {
               <h2>Create New Project</h2>
               <form onSubmit={handleProjectSubmit}>
                 <input
+                  maxLength='30'
                   type='text'
                   placeholder='Project Name'
                   value={newProject.name}
@@ -367,6 +377,7 @@ const UserProfile = () => {
                   required
                 />
                 <input
+                  maxLength='120'
                   placeholder='Project Description'
                   value={newProject.description}
                   onChange={(e) =>
@@ -413,6 +424,7 @@ const UserProfile = () => {
           </div>
         )}
       </div>
+
       <div className='userpageMainHeader'>
         <div className='imageContainer'>
           {imageLoading && <div className='imagePlaceholder'>Loading...</div>}
@@ -431,6 +443,7 @@ const UserProfile = () => {
         <h1>{user.username}</h1>
         <p>{user.position}</p>
       </div>
+
       <div className='userpageDescriptionContainer'>
         <div className='userpageDescriptionUserDescription'>
           <p>{user.description}</p>

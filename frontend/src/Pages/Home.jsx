@@ -144,12 +144,16 @@ const Home = () => {
           </div>
         </div>
       </div>
+
+      {/* Ready to Engage */}
       <div className='readytoengageSection'>
         <h1>Ready To Engage</h1>
         <button>
-          <Link to='/'>Get Started</Link>
+          <Link to='/explore'>Get Started</Link>
         </button>
       </div>
+
+      {/* Community Review */}
       <div className='communityReview'>
         <h1>Community Review</h1>
         <div className='communityReviewCardBase'>
