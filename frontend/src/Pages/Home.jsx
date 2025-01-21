@@ -8,6 +8,7 @@ import HIW1 from "./../Media/HIW1.png";
 import HIW2 from "./../Media/HIW2.png";
 import HIW3 from "./../Media/HIW3.png";
 import UserImage from "./../Media/User.png";
+import { FaHeart } from "react-icons/fa6";
 
 const Home = () => {
   const [topProjects, setTopProjects] = useState([]);
@@ -36,6 +37,42 @@ const Home = () => {
 
     fetchTopProjects();
   }, []);
+
+  const getProjectImageUrl = (url) => {
+    if (!url) {
+      return `http://localhost:8000/uploads/default-project-pic.png?t=${Date.now()}`;
+    }
+    return url;
+  };
+
+  const renderFeaturedProject = (project) => (
+    <div
+      key={project.id}
+      className='projectCard'
+    >
+      <div className='projectImageContainer'>
+        <img
+          src={getProjectImageUrl(project.project_pic)}
+          alt={project.name}
+          className='projectImage'
+          onError={(e) => {
+            e.target.src = getProjectImageUrl(null);
+          }}
+          loading='lazy'
+        />
+      </div>
+      <div className='projectInfo'>
+        <div className='projectInfoTitleandLike'>
+          <h2>{project.name}</h2>
+          <div>
+            <FaHeart />
+            <p>{project.like_count || 0}</p>
+          </div>
+        </div>
+        <p>{project.description}</p>
+      </div>
+    </div>
+  );
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
@@ -80,18 +117,8 @@ const Home = () => {
       {/* Featured Section */}
       <div className='featuredSection'>
         <h2>Featured Talents</h2>
-        <div className='featuredSectionContent'>
-          {topProjects.map((project) => (
-            <div
-              key={project.id}
-              className='featuredProject'
-            >
-              <h3>{project.name}</h3>
-              <p>{project.description}</p>
-              <p>Likes: {project.like_count}</p>
-              <Link to={`/projects/${project.id}`}>View Project</Link>
-            </div>
-          ))}
+        <div className='projectsContainer'>
+          {topProjects.map((project) => renderFeaturedProject(project))}
         </div>
       </div>
 

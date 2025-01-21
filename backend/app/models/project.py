@@ -14,6 +14,7 @@ class Project(BaseModel):
     like_count: int = 0
     project_pic: Optional[str] = None  # Changed from "No Project Pic"
     project_url: Optional[str] = None  # For external project links
+    liked_by: List[str] = []  # Add this field to track who liked the project
 
     
 class ProjectInDB(Project):

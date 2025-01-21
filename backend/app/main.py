@@ -18,16 +18,14 @@ origins = [
     "http://localhost:8000",
 ]
 
+# Update CORS middleware configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=origins,  # Use the origins list instead of a single origin
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  # Explicitly list allowed methods
     allow_headers=["*"],
-    expose_headers=["*"],
-    max_age=0  # Disable CORS caching
 )
-
 
 @app.on_event("startup")
 def startup_db():

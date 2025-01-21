@@ -1,68 +1,30 @@
-from fastapi import APIRouter, HTTPException, File, UploadFile, Form
+from fastapi import APIRouter, HTTPException, Body
+from pydantic import BaseModel
 from app.models.project import Project, ProjectInDB
 from app.database import get_db
 from bson import ObjectId
-from typing import List, Optional
-from datetime import datetime
-import os
+from typing import List
 
 router = APIRouter()
 
 @router.post("/", response_model=ProjectInDB)
-async def create_project(
-    name: str = Form(...),
-    description: str = Form(...),
-    user_associated: str = Form(...),
-    project_url: Optional[str] = Form(None),
-    project_pic: Optional[UploadFile] = File(None)
-):
+async def create_project(project: Project):
     db = get_db()
-    
+
     # Check if the user exists
-    user = db.users.find_one({"username": user_associated})
+    user = db.users.find_one({"username": project.user_associated})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    project_dict = {
-        "name": name,
-        "description": description,
-        "user_associated": user_associated,
-        "project_url": project_url,
-        "time_submitted": datetime.now().isoformat(),
-        "reviews": [],
-        "like_count": 0
-    }
-
-    # Handle project picture upload
-    if project_pic:
-        timestamp = int(datetime.now().timestamp())
-        safe_filename = f"project_{timestamp}_{project_pic.filename.replace(' ', '_')}"
-        file_location = f"uploads/{safe_filename}"
-        
-        try:
-            with open(file_location, "wb+") as file_object:
-                content = await project_pic.read()
-                file_object.write(content)
-            # Store the full URL with timestamp
-            project_dict["project_pic"] = f"http://localhost:8000/{file_location}?t={timestamp}"
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Could not upload file: {e}")
-    else:
-        timestamp = int(datetime.now().timestamp())
-        project_dict["project_pic"] = f"http://localhost:8000/uploads/default-project-pic.png?t={timestamp}"
+    # Create project object and insert it into the database
+    project_dict = project.dict()
+    project_dict["like_count"] = 0  # Ensure like_count is initialized to 0
     
     result = db.projects.insert_one(project_dict)
-    created_project = db.projects.find_one({"_id": result.inserted_id})
-    created_project["id"] = str(created_project["_id"])
     
-    return ProjectInDB(**created_project)
-
-# Add this helper function to format project data
-def format_project_data(project):
-    """Format project data with full URLs for images"""
-    if project.get("project_pic"):
-        project["project_pic"] = f"http://localhost:8000/{project['project_pic']}"
-    return project
+    project_in_db = ProjectInDB(**project_dict, id=str(result.inserted_id))
+    
+    return project_in_db
 
 @router.get("/{project_id}", response_model=ProjectInDB)
 async def get_project(project_id: str):
@@ -75,7 +37,7 @@ async def get_project(project_id: str):
         raise HTTPException(status_code=404, detail="Project not found")
     
     project_data["id"] = str(project_data["_id"])  # Map MongoDB _id to 'id'
-    return ProjectInDB(**format_project_data(project_data))
+    return ProjectInDB(**project_data)
 
 @router.get("/", response_model=dict)
 async def get_all_projects(skip: int = 0, limit: int = 20, sort: str = "like_count"):
@@ -104,26 +66,104 @@ async def get_all_projects(skip: int = 0, limit: int = 20, sort: str = "like_cou
         "totalPages": total_pages,  # Include totalPages in the response
         "totalProjects": total_projects  # Include total number of projects
     }
-      
-@router.post("/{project_id}/like", response_model=ProjectInDB)
-async def like_project(project_id: str):
-    db = get_db()
 
-    # Find the project by ID
-    project_data = db.projects.find_one({"_id": ObjectId(project_id)})
+# Add this class for the request body
+class LikeRequest(BaseModel):
+    current_user: str
 
-    if not project_data:
-        raise HTTPException(status_code=404, detail="Project not found")
-    
-    # Increment the like_count
-    new_like_count = project_data.get("like_count", 0) + 1
-    db.projects.update_one({"_id": ObjectId(project_id)}, {"$set": {"like_count": new_like_count}})
+@router.post("/{project_id}/like")
+async def like_project(project_id: str, request: LikeRequest):
+    try:
+        db = get_db()
+        project = db.projects.find_one({"_id": ObjectId(project_id)})
+        
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+        
+        # Ensure liked_by exists
+        liked_by = project.get("liked_by", [])
+        
+        # Check if user already liked the project
+        if request.current_user in liked_by:
+            raise HTTPException(status_code=400, detail="Already liked")
 
-    # Fetch the updated project data
-    updated_project = db.projects.find_one({"_id": ObjectId(project_id)})
-    updated_project["id"] = str(updated_project["_id"])
+        # Update project
+        result = db.projects.update_one(
+            {"_id": ObjectId(project_id)},
+            {
+                "$inc": {"like_count": 1},
+                "$addToSet": {"liked_by": request.current_user}
+            }
+        )
 
-    return ProjectInDB(**updated_project)
+        if result.modified_count == 0:
+            raise HTTPException(status_code=500, detail="Failed to update project")
+
+        # Fetch updated project
+        updated_project = db.projects.find_one({"_id": ObjectId(project_id)})
+        if not updated_project:
+            raise HTTPException(status_code=404, detail="Project not found after update")
+        
+        # Ensure all fields are present in response
+        response_data = {
+            "id": str(updated_project["_id"]),
+            "like_count": updated_project.get("like_count", 0),
+            "liked_by": updated_project.get("liked_by", []),
+            **{k: v for k, v in updated_project.items() if k not in ["_id", "like_count", "liked_by"]}
+        }
+        
+        return response_data
+        
+    except Exception as e:
+        print(f"Error in like_project: {str(e)}")  # Server-side debug log
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/{project_id}/unlike")
+async def unlike_project(project_id: str, request: LikeRequest):
+    try:
+        db = get_db()
+        project = db.projects.find_one({"_id": ObjectId(project_id)})
+        
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+        
+        # Ensure liked_by exists
+        liked_by = project.get("liked_by", [])
+        
+        # Check if user has liked the project
+        if request.current_user not in liked_by:
+            raise HTTPException(status_code=400, detail="Haven't liked yet")
+
+        # Update project
+        result = db.projects.update_one(
+            {"_id": ObjectId(project_id)},
+            {
+                "$inc": {"like_count": -1},
+                "$pull": {"liked_by": request.current_user}
+            }
+        )
+
+        if result.modified_count == 0:
+            raise HTTPException(status_code=500, detail="Failed to update project")
+
+        # Fetch updated project
+        updated_project = db.projects.find_one({"_id": ObjectId(project_id)})
+        if not updated_project:
+            raise HTTPException(status_code=404, detail="Project not found after update")
+        
+        # Ensure all fields are present in response
+        response_data = {
+            "id": str(updated_project["_id"]),
+            "like_count": updated_project.get("like_count", 0),
+            "liked_by": updated_project.get("liked_by", []),
+            **{k: v for k, v in updated_project.items() if k not in ["_id", "like_count", "liked_by"]}
+        }
+        
+        return response_data
+        
+    except Exception as e:
+        print(f"Error in unlike_project: {str(e)}")  # Server-side debug log
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/top", response_model=List[ProjectInDB])
 async def get_top_projects():
@@ -138,30 +178,3 @@ async def get_top_projects():
     ]
 
     return top_projects_list
-
-@router.delete("/{project_id}")
-async def delete_project(project_id: str):
-    """Delete a project"""
-    db = get_db()
-    
-    # Check if project exists
-    project = db.projects.find_one({"_id": ObjectId(project_id)})
-    if not project:
-        raise HTTPException(status_code=404, detail="Project not found")
-    
-    # Delete project image if it exists and isn't the default
-    if project.get("project_pic") and "default-project-pic" not in project["project_pic"]:
-        try:
-            file_path = project["project_pic"].split("http://localhost:8000/")[1].split("?")[0]
-            if os.path.exists(file_path):
-                os.remove(file_path)
-        except Exception as e:
-            print(f"Error deleting project image: {e}")
-    
-    # Delete the project
-    result = db.projects.delete_one({"_id": ObjectId(project_id)})
-    
-    if result.deleted_count == 0:
-        raise HTTPException(status_code=404, detail="Project not found")
-        
-    return {"message": "Project deleted successfully"}

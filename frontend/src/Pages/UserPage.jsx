@@ -10,7 +10,6 @@ import {
 } from "react-icons/io5";
 import { FaHeart } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
-import { FaLink } from "react-icons/fa6";
 
 const UserProfile = () => {
   const navigate = useNavigate();
