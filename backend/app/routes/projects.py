@@ -165,6 +165,52 @@ async def unlike_project(project_id: str, request: LikeRequest):
         print(f"Error in unlike_project: {str(e)}")  # Server-side debug log
         raise HTTPException(status_code=500, detail=str(e))
 
+class ReviewRequest(BaseModel):
+    review_text: str
+    user_name: str
+
+@router.post("/{project_id}/review")
+async def add_review(project_id: str, request: ReviewRequest):
+    try:
+        db = get_db()
+        project = db.projects.find_one({"_id": ObjectId(project_id)})
+        
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+        
+        # Create simple review
+        review = request.review_text
+
+        # Ensure reviews array exists
+        if "reviews" not in project:
+            db.projects.update_one(
+                {"_id": ObjectId(project_id)},
+                {"$set": {"reviews": []}}
+            )
+
+        # Update project with new review
+        result = db.projects.update_one(
+            {"_id": ObjectId(project_id)},
+            {"$push": {"reviews": review}}
+        )
+
+        if result.modified_count == 0:
+            raise HTTPException(status_code=500, detail="Failed to add review")
+
+        # Fetch updated project
+        updated_project = db.projects.find_one({"_id": ObjectId(project_id)})
+        if not updated_project:
+            raise HTTPException(status_code=404, detail="Project not found after update")
+
+        # Format response
+        updated_project["id"] = str(updated_project["_id"])
+        del updated_project["_id"]
+        return updated_project
+        
+    except Exception as e:
+        print(f"Error in add_review: {str(e)}")  # Server-side debug log
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.get("/top", response_model=List[ProjectInDB])
 async def get_top_projects():
     db = get_db()
@@ -178,3 +224,24 @@ async def get_top_projects():
     ]
 
     return top_projects_list
+
+@router.delete("/{project_id}")
+async def delete_project(project_id: str):
+    try:
+        db = get_db()
+        # First check if project exists
+        project = db.projects.find_one({"_id": ObjectId(project_id)})
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+        
+        # Delete the project
+        result = db.projects.delete_one({"_id": ObjectId(project_id)})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=500, detail="Failed to delete project")
+            
+        return {"message": "Project deleted successfully"}
+        
+    except Exception as e:
+        print(f"Error in delete_project: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))

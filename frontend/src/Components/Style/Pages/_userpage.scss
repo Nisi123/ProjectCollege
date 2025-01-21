@@ -420,15 +420,6 @@
   margin-top: 1rem;
 }
 
-.reviewsList {
-  overflow-y: scroll;
-}
-
-.reviewsList::-webkit-scrollbar {
-  background: rgb(237, 237, 237);
-  border-radius: 2rem;
-}
-
 .reviewItem {
   color: rgba(0, 0, 0, 0.686);
   border-bottom: 1px solid rgba(0, 0, 0, 0.097);

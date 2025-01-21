@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types"; // Import PropTypes for validation
 import MainLogo from "../../Media/MainLogo.png";
 import User from "../../Media/User.png";
+import { FaRegCircleUser } from "react-icons/fa6";
 
 const Navbar = ({ userId }) => {
   return (
@@ -24,10 +25,11 @@ const Navbar = ({ userId }) => {
       </ul>
       <div className='navbarImage'>
         <Link to={`/user/${userId}`}>
-          <img
+          {/* <img
             src={User}
             alt='User'
-          />
+          /> */}
+          <FaRegCircleUser />
         </Link>
       </div>
     </div>

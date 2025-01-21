@@ -18,13 +18,13 @@ origins = [
     "http://localhost:8000",
 ]
 
-# Update CORS middleware configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # Use the origins list instead of a single origin
+    allow_origins=origins,  # Use the origins list
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  # Explicitly list allowed methods
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
+    expose_headers=["*"],
 )
 
 @app.on_event("startup")

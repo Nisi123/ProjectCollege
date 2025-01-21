@@ -21,8 +21,8 @@
   text-decoration: none;
 }
 
-.navbarImage img {
-  height: 2rem;
+.navbarImage {
+  font-size: 2rem;
 }
 
 /* Footer */
@@ -624,6 +624,21 @@
   padding: 0;
 }
 
+.likesCount {
+  cursor: pointer;
+}
+
+.likesCount:hover {
+  transform: scale(1.1);
+}
+
+.projectDetailsHeader .liked {
+  color: red;
+}
+.projectDetailsHeader .liked span {
+  color: black;
+}
+
 .pagination {
   display: flex;
   justify-content: center;
@@ -653,6 +668,66 @@
 .pagination button.active {
   background: var(--MainBgColor);
   color: white;
+}
+
+.projectReviews {
+  margin-top: 1rem;
+}
+.projectReviews .reviewForm {
+  margin-bottom: 0.5rem;
+}
+.projectReviews .reviewForm div {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.projectReviews .reviewForm div input {
+  width: 91%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  outline: none;
+}
+.projectReviews .reviewForm div input:focus {
+  border-color: var(--MainBgColor);
+}
+.projectReviews h3 {
+  margin-bottom: 0.5rem;
+}
+.projectReviews .reviewsContainer {
+  max-height: 8rem;
+  overflow-y: auto;
+}
+.projectReviews .reviewsContainer::-webkit-scrollbar {
+  width: 8px;
+}
+.projectReviews .reviewsContainer::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+.projectReviews .reviewsContainer::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+.projectReviews .reviewsContainer::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+.projectReviews .reviewsContainer .reviewsList .reviewItem {
+  padding: 10px;
+  margin-bottom: 8px;
+  background: #f8f8f8;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+.projectReviews .reviewsContainer .reviewsList .reviewItem p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #333;
+}
+.projectReviews .reviewsContainer .noReviews {
+  color: #666;
+  text-align: center;
+  padding: 1rem 0;
 }
 
 :root {
@@ -1183,15 +1258,6 @@ p span a {
 
 .projectDetailsInfo div {
   margin-top: 1rem;
-}
-
-.reviewsList {
-  overflow-y: scroll;
-}
-
-.reviewsList::-webkit-scrollbar {
-  background: rgb(237, 237, 237);
-  border-radius: 2rem;
 }
 
 .reviewItem {

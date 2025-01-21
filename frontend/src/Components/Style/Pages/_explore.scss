@@ -162,6 +162,22 @@
   }
 }
 
+.likesCount {
+  cursor: pointer;
+}
+
+.likesCount:hover {
+  transform: scale(1.1);
+}
+
+.projectDetailsHeader .liked {
+  color: red;
+
+  span {
+    color: black;
+  }
+}
+
 .pagination {
   display: flex;
   justify-content: center;
@@ -193,6 +209,83 @@
     &.active {
       background: var(--MainBgColor);
       color: white;
+    }
+  }
+}
+
+.projectReviews {
+  margin-top: 1rem;
+
+  .reviewForm {
+    margin-bottom: 0.5rem;
+    div {
+      display: flex;
+      align-items: center;
+      width: 100%;
+
+      input {
+        width: 91%;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        outline: none;
+
+        &:focus {
+          border-color: var(--MainBgColor);
+        }
+      }
+    }
+  }
+
+  h3 {
+    margin-bottom: 0.5rem;
+  }
+
+  .reviewsContainer {
+    max-height: 8rem; // Set a fixed height for scroll
+    overflow-y: auto; // Enable vertical scrolling
+    // padding-right: 10px; // Space for scrollbar
+
+    // Customize scrollbar
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+      // transition: background-color 0.2s;
+
+      &:hover {
+        background: #555;
+      }
+    }
+
+    .reviewsList {
+      .reviewItem {
+        padding: 10px;
+        margin-bottom: 8px;
+        background: #f8f8f8;
+        border-radius: 6px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+
+        p {
+          margin: 0;
+          font-size: 0.9rem;
+          color: #333;
+        }
+      }
+    }
+
+    .noReviews {
+      color: #666;
+      text-align: center;
+      padding: 1rem 0;
     }
   }
 }

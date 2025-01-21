@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { FaRegHeart, FaHeart } from "react-icons/fa6";
+import { IoClose } from "react-icons/io5"; // Add this import
 
 const Explore = () => {
   const [projects, setProjects] = useState([]); // All projects fetched from the backend
@@ -12,6 +13,8 @@ const Explore = () => {
   const [filterType, setFilterType] = useState("name"); // Filter type (either 'name' or 'user_associated')
   const [likedProjects, setLikedProjects] = useState(new Set());
   const [currentUser, setCurrentUser] = useState(null);
+  const [selectedProject, setSelectedProject] = useState(null); // Add this state
+  const [newReview, setNewReview] = useState("");
   const itemsPerPage = 20;
 
   useEffect(() => {
@@ -140,6 +143,15 @@ const Explore = () => {
         )
       );
 
+      // Update selectedProject if the liked project is currently selected
+      if (selectedProject && selectedProject.id === projectId) {
+        setSelectedProject({
+          ...selectedProject,
+          like_count: response.data.like_count,
+          liked_by: response.data.liked_by,
+        });
+      }
+
       // Update liked projects set
       setLikedProjects((prev) => {
         const newLikes = new Set(prev);
@@ -157,6 +169,45 @@ const Explore = () => {
       } else {
         console.error("Error toggling like:", error);
       }
+    }
+  };
+
+  const openProjectDetails = (project) => {
+    setSelectedProject(project);
+  };
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    if (!currentUser) {
+      alert("Please log in to add a review");
+      return;
+    }
+
+    if (!newReview.trim()) return; // Don't submit empty reviews
+
+    try {
+      const response = await axios.post(
+        `http://localhost:8000/projects/${selectedProject.id}/review`,
+        {
+          review_text: newReview,
+          user_name: currentUser.username,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+
+      if (response.data) {
+        setSelectedProject(response.data);
+        setNewReview(""); // Clear the input
+      }
+    } catch (error) {
+      console.error("Error adding review:", error.response?.data || error);
+      alert("Failed to add review");
     }
   };
 
@@ -192,6 +243,7 @@ const Explore = () => {
             <div
               className='projectCard explorePageProjectCard'
               key={project.id}
+              onClick={() => openProjectDetails(project)} // Add this onClick handler
             >
               <div className='projectImageContainer'>
                 <img
@@ -231,6 +283,99 @@ const Explore = () => {
           <p>No projects available.</p>
         )}
       </div>
+
+      {/* Add Project Details Modal */}
+      {selectedProject && (
+        <div className='modalOverlay projectDetailsModalOverlay'>
+          <div className='modal projectDetailsModal'>
+            <button
+              onClick={() => setSelectedProject(null)}
+              className='closeButton'
+            >
+              <IoClose />
+            </button>
+            <div className='projectDetailsContent'>
+              <div className='projectDetailsImage'>
+                <img
+                  src={getProjectImageUrl(selectedProject.project_pic)}
+                  alt={selectedProject.name}
+                  onError={(e) => {
+                    e.target.src = getProjectImageUrl(null);
+                  }}
+                />
+              </div>
+              <div className='projectDetailsHeader'>
+                <h2>{selectedProject.name}</h2>
+
+                <div
+                  className={`likesCount ${
+                    likedProjects.has(selectedProject.id) ? "liked" : ""
+                  }`}
+                  onClick={(e) => handleLike(selectedProject.id, e)}
+                >
+                  {likedProjects.has(selectedProject.id) ? (
+                    <FaHeart />
+                  ) : (
+                    <FaRegHeart />
+                  )}
+                  <span>{selectedProject.like_count || 0}</span>
+                </div>
+              </div>
+              <div className='projectDetailsInfo'>
+                <p className='projectDescription'>
+                  {selectedProject.description}
+                </p>
+                <div>
+                  {selectedProject.project_url && (
+                    <a
+                      href={selectedProject.project_url}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='projectUrl'
+                    >
+                      View Project
+                    </a>
+                  )}
+                </div>
+              </div>
+              <div className='projectReviews'>
+                <h3>Reviews</h3>
+                <form
+                  onSubmit={handleReviewSubmit}
+                  className='reviewForm'
+                >
+                  <div>
+                    <input
+                      type='text'
+                      value={newReview}
+                      onChange={(e) => setNewReview(e.target.value)}
+                      placeholder='Add a comment...'
+                      required
+                    />
+                  </div>
+                </form>
+                <div className='reviewsContainer'>
+                  {selectedProject.reviews &&
+                  selectedProject.reviews.length > 0 ? (
+                    <div className='reviewsList'>
+                      {selectedProject.reviews.map((review, index) => (
+                        <div
+                          key={index}
+                          className='reviewItem'
+                        >
+                          <p>{review}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className='noReviews'>No reviews yet</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Pagination */}
       <div className='pagination'>
