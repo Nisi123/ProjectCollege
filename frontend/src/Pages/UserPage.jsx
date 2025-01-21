@@ -8,7 +8,7 @@ import {
   IoCloseCircleOutline,
   IoClose,
 } from "react-icons/io5";
-import { FaHeart } from "react-icons/fa6";
+import { FaRegHeart } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
 
 const UserProfile = () => {
@@ -292,7 +292,7 @@ const UserProfile = () => {
           <div className='projectInfoTitleandLike'>
             <h2>{project.name}</h2>
             <div>
-              <FaHeart />
+              <FaRegHeart />
               <p>{project.like_count || 0}</p>
             </div>
           </div>
@@ -592,7 +592,7 @@ const UserProfile = () => {
               <div className='projectDetailsHeader'>
                 <h2>{selectedProject.name}</h2>
                 <div className='likesCount'>
-                  <FaHeart />
+                  <FaRegHeart />
                   <span>{selectedProject.like_count || 0}</span>
                 </div>
               </div>

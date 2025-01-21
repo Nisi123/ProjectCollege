@@ -62,9 +62,9 @@ const Home = () => {
         />
       </div>
       <div className='projectInfo'>
-        <div className='projectInfoTitleandLike'>
+        <div className='projectInfoTitleandLike HomeprojectInfoTitleandLike'>
           <h2>{project.name}</h2>
-          <div>
+          <div className='HomePageLike'>
             <FaHeart />
             <p>{project.like_count || 0}</p>
           </div>

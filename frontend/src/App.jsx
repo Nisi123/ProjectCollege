@@ -1,7 +1,6 @@
 import "./Components/Style/style.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./Pages/Home";
-import About from "./Pages/About";
 import Explore from "./Pages/Explore";
 import Layout from "./components/Layout/Layout";
 import UserPage from "./Pages/UserPage";
@@ -28,10 +27,6 @@ function App() {
           <Route
             path='/'
             element={<ProtectedRoute element={<Home />} />}
-          />
-          <Route
-            path='/about'
-            element={<ProtectedRoute element={<About />} />}
           />
           <Route
             path='/explore'

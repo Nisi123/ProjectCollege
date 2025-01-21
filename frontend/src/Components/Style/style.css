@@ -288,6 +288,10 @@
   text-decoration: underline;
 }
 
+.HomeprojectInfoTitleandLike .HomePageLike {
+  color: red !important;
+}
+
 /* Howitworks Section */
 .howitworksSection h1 {
   color: var(--MainBgColor);
@@ -613,7 +617,7 @@
   transform: scale(1.1);
 }
 .projectsContainer .projectInfoTitleandLike .likeButton.liked {
-  color: red;
+  color: red !important;
 }
 .projectsContainer .projectInfoTitleandLike .likeButton p {
   font-size: 1rem;
@@ -1090,7 +1094,7 @@ p span a {
 
 .projectInfoTitleandLike div {
   display: flex;
-  color: red;
+  color: #666 !important;
   align-items: center;
   width: 3.5rem;
 }
@@ -1156,7 +1160,6 @@ p span a {
 
 .likesCount {
   font-size: 1.2rem;
-  color: red;
   display: flex;
   gap: 0.5rem;
   align-items: center;

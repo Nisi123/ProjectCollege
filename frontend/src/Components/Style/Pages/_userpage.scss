@@ -327,7 +327,8 @@
 
 .projectInfoTitleandLike div {
   display: flex;
-  color: red;
+  // color: red;
+  color: #666 !important;
   align-items: center;
   width: 3.5rem;
 }
@@ -393,7 +394,7 @@
 
 .likesCount {
   font-size: 1.2rem;
-  color: red;
+  // color: #666;
   display: flex;
   gap: 0.5rem;
   align-items: center;
