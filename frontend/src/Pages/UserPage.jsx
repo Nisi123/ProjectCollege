@@ -502,6 +502,7 @@ const UserProfile = () => {
           )}
         </button>
         <input
+          maxLength={20}
           type='text'
           placeholder='Search projects...'
           value={searchTerm}

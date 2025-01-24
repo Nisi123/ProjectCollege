@@ -219,6 +219,7 @@ const Explore = () => {
       <div className='search-barContainer'>
         <div className='search-bar'>
           <input
+            maxLength={20}
             type='text'
             placeholder='Search with filter'
             value={searchTerm}
@@ -346,6 +347,7 @@ const Explore = () => {
                 >
                   <div>
                     <input
+                      maxLength={50}
                       type='text'
                       value={newReview}
                       onChange={(e) => setNewReview(e.target.value)}

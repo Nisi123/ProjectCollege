@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import HeroImage from "./../Media/AbstractHeroBg.png";
 import HeroImage1 from "./../Media/HeroImage1.png";
 import HeroImage2 from "./../Media/HeroImage2.png";
@@ -74,6 +75,43 @@ const Home = () => {
     </div>
   );
 
+  const fadeIn = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.6 } },
+  };
+
+  const slideUp = {
+    hidden: { opacity: 0, y: 75 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut",
+      },
+    },
+  };
+
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6 },
+    },
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.2,
+        staggerChildren: 0.15,
+      },
+    },
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
@@ -116,13 +154,39 @@ const Home = () => {
 
       {/* Featured Section */}
       <div className='featuredSection'>
-        <h2>Featured Talents</h2>
-        <div className='projectsContainer'>
-          {topProjects.map((project) => renderFeaturedProject(project))}
-        </div>
+        <motion.h2
+          initial='hidden'
+          whileInView='visible'
+          viewport={{ once: true, amount: 0.5 }} // Only trigger when half the element is in view
+          variants={fadeInUp}
+        >
+          Featured Talents
+        </motion.h2>
+        <motion.div
+          className='projectsContainer'
+          initial='hidden'
+          whileInView='visible'
+          viewport={{ once: true, amount: 0.3 }} // Trigger when 30% of container is visible
+          variants={staggerContainer}
+        >
+          {topProjects.map((project) => (
+            <motion.div
+              key={project.id}
+              variants={fadeInUp}
+            >
+              {renderFeaturedProject(project)}
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
 
-      <div className='howitworksSection'>
+      <motion.div
+        className='howitworksSection'
+        initial='hidden'
+        whileInView='visible'
+        viewport={{ once: true, amount: 0.3 }}
+        variants={fadeInUp}
+      >
         <h1>How It Works</h1>
         <div>
           <div>
@@ -170,18 +234,27 @@ const Home = () => {
             />
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Ready to Engage */}
-      <div className='readytoengageSection'>
+      <motion.div
+        className='readytoengageSection'
+        initial='hidden'
+        whileInView='visible'
+        viewport={{ once: true, amount: 0.5 }}
+        variants={fadeInUp}
+      >
         <h1>Ready To Engage</h1>
-        <button>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
           <Link to='/explore'>Get Started</Link>
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
 
       {/* Community Review */}
-      <div className='communityReview'>
+      {/* <div className='communityReview'>
         <h1>Community Review</h1>
         <div className='communityReviewCardBase'>
           <div className='card'>
@@ -215,7 +288,7 @@ const Home = () => {
             <p>User Review</p>
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };

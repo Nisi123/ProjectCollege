@@ -9,7 +9,7 @@
   display: flex;
   justify-content: end;
   align-items: center;
-  width: 95%;
+  width: 93%;
 }
 
 .search-bar {
@@ -190,8 +190,6 @@
     background: transparent;
     padding: 0.5rem 0.75rem;
     border-radius: 50%;
-    border: 2px solid var(--MainBgColor);
-    color: var(--MainBgColor);
     cursor: pointer;
     transition: all 0.3s ease;
 

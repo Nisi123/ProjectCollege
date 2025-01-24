@@ -80,6 +80,7 @@ function SignupLogin() {
         >
           {isSignup && (
             <input
+              maxLength={25}
               type='text'
               placeholder='Username'
               value={username}
@@ -87,12 +88,14 @@ function SignupLogin() {
             />
           )}
           <input
+            maxLength={25}
             type='text'
             placeholder='Email'
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <input
+            maxLength={25}
             type='password'
             placeholder='Password'
             value={password}

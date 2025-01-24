@@ -94,6 +94,7 @@ const CompleteProfile = ({ userId }) => {
         <div>
           <h3>Position</h3>
           <input
+            maxLength={20}
             type='text'
             id='position'
             value={position}
@@ -114,6 +115,7 @@ const CompleteProfile = ({ userId }) => {
         <div>
           <h3>Study Level</h3>
           <input
+            maxLength={10}
             type='text'
             id='level'
             value={level}
@@ -124,6 +126,7 @@ const CompleteProfile = ({ userId }) => {
         <div>
           <h3>Description</h3>
           <input
+            maxLength={100}
             type='text'
             id='description'
             value={description}

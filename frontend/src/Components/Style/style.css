@@ -14,11 +14,35 @@
 
 .navbar ul li {
   font-size: 1.1rem;
+  position: relative;
 }
 
 .navbar ul li a {
   color: black;
   text-decoration: none;
+  transition: color 0.3s ease;
+}
+.navbar ul li a:hover {
+  color: var(--MainBgColor);
+}
+.navbar ul li a::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -5px;
+  left: 0;
+  background-color: var(--MainBgColor);
+  transition: width 0.3s ease;
+}
+.navbar ul li a:hover::after {
+  width: 100%;
+}
+.navbar ul li a.active {
+  color: var(--MainBgColor);
+}
+.navbar ul li a.active::after {
+  width: 100%;
 }
 
 .navbarImage {
@@ -120,6 +144,8 @@
   margin-right: 0.5rem;
   cursor: pointer;
   border: 2px solid var(--MainBgColor);
+  transition: background 0.3s ease;
+  will-change: transform;
 }
 
 .heroSectionContent button a {
@@ -144,6 +170,7 @@
 
 .heroSectionContent button:last-child:hover,
 .heroSectionContent button:last-child:hover a {
+  transition: background 0.3s ease;
   background-color: var(--MainBgColor);
   color: white;
 }
@@ -195,6 +222,7 @@
 .featuredSection {
   padding: 10px 0px;
   margin-top: 0rem;
+  will-change: transform, opacity;
 }
 .featuredSection h2 {
   color: var(--MainBgColor);
@@ -209,6 +237,9 @@
   justify-content: center;
   gap: 5rem;
   margin: 0 5rem;
+}
+.featuredSection .projectsContainer > div {
+  will-change: transform, opacity;
 }
 .featuredSection .projectCard {
   height: 22rem;
@@ -293,6 +324,10 @@
 }
 
 /* Howitworks Section */
+.howitworksSection {
+  will-change: transform, opacity;
+  overflow: hidden;
+}
 .howitworksSection h1 {
   color: var(--MainBgColor);
   font-size: var(--MainTitleFontSize);
@@ -301,34 +336,33 @@
   margin-top: 5rem;
   margin-bottom: 5rem;
 }
-
 .howitworksSection p {
   font-size: 1rem;
   font-weight: var(--MainParagraphFontWeight);
   margin-left: 1rem;
   width: 20rem;
 }
-
 .howitworksSection div {
   display: flex;
   align-items: start;
   margin-left: 7rem;
   margin-bottom: 1rem;
 }
-
 .howitworksSection div:nth-child(3) {
   margin-left: 40rem;
 }
-
 .howitworksSection div img {
   height: 15rem;
 }
 
 /* Readytoengage Section */
 .readytoengageSection {
+  padding-bottom: 2rem;
   display: flex;
   flex-flow: column;
   align-items: center;
+  will-change: opacity;
+  overflow: hidden;
 }
 
 .readytoengageSection h1 {
@@ -346,6 +380,8 @@
   background: var(--MainBgColor);
   color: white;
   border: 2px solid var(--MainBgColor);
+  transition: background 0.3s ease;
+  will-change: transform;
 }
 
 .readytoengageSection button a {
@@ -369,7 +405,7 @@
   justify-content: center;
   align-items: start;
   flex-flow: column;
-  margin-top: 5rem;
+  margin-top: 2rem;
 }
 
 .communityReview h1 {
@@ -472,6 +508,13 @@
   text-decoration: underline;
 }
 
+.featuredSection,
+.howitworksSection,
+.readytoengageSection {
+  will-change: transform, opacity;
+  transform-origin: bottom;
+}
+
 .exploreMainTitle {
   font-size: var(--MainTitleFontSize);
   font-weight: var(--MainTitleFontWeight);
@@ -483,7 +526,7 @@
   display: flex;
   justify-content: end;
   align-items: center;
-  width: 95%;
+  width: 93%;
 }
 
 .search-bar {
@@ -651,8 +694,6 @@
   background: transparent;
   padding: 0.5rem 0.75rem;
   border-radius: 50%;
-  border: 2px solid var(--MainBgColor);
-  color: var(--MainBgColor);
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -901,7 +942,7 @@ p span a {
 }
 
 .UserPageSearchBar {
-  margin-right: 13rem;
+  margin-right: 8rem;
   margin-top: 2rem;
 }
 
