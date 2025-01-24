@@ -107,15 +107,20 @@ const UserProfile = () => {
       formData.append("description", newProject.description);
       formData.append("user_associated", user.username);
       formData.append("time_submitted", new Date().toISOString());
-      formData.append("reviews", JSON.stringify([])); // Send empty array for reviews
-      formData.append("like_count", "0"); // Send initial like count
 
       if (newProject.project_url) {
         formData.append("project_url", newProject.project_url);
       }
 
+      // Log the file being uploaded
       if (newProject.project_pic) {
+        console.log("Uploading file:", newProject.project_pic);
         formData.append("project_pic", newProject.project_pic);
+      }
+
+      // Log the FormData content
+      for (let pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
       }
 
       const response = await axios.post(
@@ -141,7 +146,10 @@ const UserProfile = () => {
       });
     } catch (error) {
       console.error("Error creating project:", error.response?.data || error);
-      alert("Failed to create project. Please try again.");
+      alert(
+        error.response?.data?.detail ||
+          "Failed to create project. Please try again."
+      );
     }
   };
 
@@ -241,16 +249,13 @@ const UserProfile = () => {
       return `http://localhost:8000/uploads/default-project-pic.png?t=${Date.now()}`;
     }
 
-    // Log the URL for debugging
-    console.log("Original project image URL:", url);
+    // If URL is relative (starts with /uploads), prepend the backend URL
+    if (url.startsWith("/uploads")) {
+      return `http://localhost:8000${url}?t=${Date.now()}`;
+    }
 
-    // Always add a timestamp to prevent caching
-    const timestamp = Date.now();
-    const baseUrl = url.split("?")[0];
-    const finalUrl = `${baseUrl}?t=${timestamp}`;
-
-    console.log("Final project image URL:", finalUrl);
-    return finalUrl;
+    // Add cache-busting timestamp
+    return `${url}?t=${Date.now()}`;
   };
 
   // Add image loading handler
@@ -302,17 +307,7 @@ const UserProfile = () => {
               <p>{project.like_count || 0}</p>
             </div>
           </div>
-
           <p>{project.description}</p>
-          {/* {project.project_url && (
-            <a
-              href={project.project_url}
-              target='_blank'
-              rel='noopener noreferrer'
-            >
-              View Project
-            </a>
-          )} */}
         </div>
       </div>
     );

@@ -1,9 +1,13 @@
+import os
+import shutil
+from fastapi import UploadFile
 from fastapi import APIRouter, HTTPException, Body, Form, File, UploadFile
 from pydantic import BaseModel
 from app.models.project import Project, ProjectInDB
 from app.database import get_db
 from bson import ObjectId
 from typing import List, Optional
+from app.utils.file_handler import save_upload_file
 
 router = APIRouter()
 
@@ -18,7 +22,7 @@ async def create_project(
 ):
     try:
         db = get_db()
-
+        
         # Check if the user exists
         user = db.users.find_one({"username": user_associated})
         if not user:
@@ -27,10 +31,9 @@ async def create_project(
         # Process project pic if provided
         project_pic_url = None
         if project_pic:
-            # Handle file upload here
-            # Save the file and get its URL
-            pass
-
+            relative_url = save_upload_file(project_pic, user_associated)
+            project_pic_url = f"http://localhost:8000{relative_url}"  # Create full URL
+            
         # Create project object
         project_dict = {
             "name": name,
@@ -50,6 +53,9 @@ async def create_project(
         return ProjectInDB(**project_dict)
 
     except Exception as e:
+        print(f"Error in create_project: {str(e)}")
+        if "Could not save image" in str(e):
+            raise HTTPException(status_code=500, detail=str(e))
         raise HTTPException(status_code=422, detail=str(e))
 
 @router.get("/{project_id}", response_model=ProjectInDB)

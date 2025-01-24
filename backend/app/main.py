@@ -5,13 +5,20 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import os
 
+# Update the static files configuration
 app = FastAPI()
 
-# Ensure uploads directory exists
-os.makedirs("uploads", exist_ok=True)
+# Ensure uploads directory exists with proper permissions
+upload_dir = "uploads"
+os.makedirs(upload_dir, exist_ok=True)
+os.chmod(upload_dir, 0o755)  # Set proper permissions
 
-# Mount the uploads directory with cache control headers
-app.mount("/uploads", StaticFiles(directory="uploads", html=True), name="static")
+# Mount the uploads directory
+app.mount("/uploads", StaticFiles(
+    directory=upload_dir,
+    check_dir=True,
+    html=False,  # Changed to False since we're serving images
+), name="uploads")
 
 origins = [
     "http://localhost:5173",
