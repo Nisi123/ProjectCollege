@@ -126,7 +126,7 @@ const CompleteProfile = ({ userId }) => {
         <div>
           <h3>Description</h3>
           <input
-            maxLength={100}
+            maxLength={150}
             type='text'
             id='description'
             value={description}

@@ -25,37 +25,38 @@ const Explore = () => {
     const fetchProjects = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("http://localhost:8000/projects", {
+        const response = await axios.get("http://localhost:8000/projects/", {
           params: {
-            skip: 0, // Always fetch the first page when loading initially
-            limit: 1000, // Fetch a larger number of projects (e.g., 1000) to support search and pagination
+            skip: 0,
+            limit: 1000,
+          },
+          headers: {
+            Accept: "application/json",
           },
         });
 
-        console.log("API response:", response.data); // Log the full response
-
-        if (response.data.projects) {
+        if (response.data?.projects) {
           const projects = response.data.projects;
           setProjects(projects);
-          setFilteredProjects(projects); // Initially, set filtered projects as all fetched projects
+          setFilteredProjects(projects);
 
-          // Initialize liked projects based on liked_by arrays
-          const liked = new Set(
-            projects
-              .filter((p) => p.liked_by?.includes(userData?.username))
-              .map((p) => p.id)
-          );
-          setLikedProjects(liked);
+          // Initialize liked projects
+          if (userData?.username) {
+            const liked = new Set(
+              projects
+                .filter((p) => p.liked_by?.includes(userData.username))
+                .map((p) => p.id)
+            );
+            setLikedProjects(liked);
+          }
 
-          setTotalPages(
-            Math.ceil(response.data.projects.length / itemsPerPage)
-          ); // Calculate total pages based on fetched data
-        } else {
-          console.error("Unexpected API response:", response.data);
-          setProjects([]);
+          setTotalPages(Math.ceil(response.data.totalProjects / itemsPerPage));
         }
       } catch (error) {
-        console.error("Error fetching projects:", error);
+        console.error(
+          "Error fetching projects:",
+          error.response?.data || error
+        );
         setProjects([]);
       } finally {
         setLoading(false);

@@ -106,6 +106,9 @@ const UserProfile = () => {
       formData.append("name", newProject.name);
       formData.append("description", newProject.description);
       formData.append("user_associated", user.username);
+      formData.append("time_submitted", new Date().toISOString());
+      formData.append("reviews", JSON.stringify([])); // Send empty array for reviews
+      formData.append("like_count", "0"); // Send initial like count
 
       if (newProject.project_url) {
         formData.append("project_url", newProject.project_url);
@@ -115,15 +118,18 @@ const UserProfile = () => {
         formData.append("project_pic", newProject.project_pic);
       }
 
-      await axios.post("http://localhost:8000/projects/", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.post(
+        "http://localhost:8000/projects/",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-      // Refresh the projects list
+      console.log("Project created:", response.data);
       await fetchUserData();
-
       setProjectModalOpen(false);
       setNewProject({
         name: "",
@@ -134,7 +140,7 @@ const UserProfile = () => {
         project_pic: null,
       });
     } catch (error) {
-      console.error("Error creating project:", error);
+      console.error("Error creating project:", error.response?.data || error);
       alert("Failed to create project. Please try again.");
     }
   };
@@ -388,7 +394,7 @@ const UserProfile = () => {
                   required
                 />
                 <input
-                  maxLength='120'
+                  maxLength='200'
                   placeholder='Project Description'
                   value={newProject.description}
                   onChange={(e) =>

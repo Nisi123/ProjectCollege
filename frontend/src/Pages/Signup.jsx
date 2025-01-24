@@ -88,7 +88,7 @@ function SignupLogin() {
             />
           )}
           <input
-            maxLength={25}
+            maxLength={40}
             type='text'
             placeholder='Email'
             value={email}

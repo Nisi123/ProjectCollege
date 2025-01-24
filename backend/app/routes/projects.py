@@ -1,30 +1,56 @@
-from fastapi import APIRouter, HTTPException, Body
+from fastapi import APIRouter, HTTPException, Body, Form, File, UploadFile
 from pydantic import BaseModel
 from app.models.project import Project, ProjectInDB
 from app.database import get_db
 from bson import ObjectId
-from typing import List
+from typing import List, Optional
 
 router = APIRouter()
 
 @router.post("/", response_model=ProjectInDB)
-async def create_project(project: Project):
-    db = get_db()
+async def create_project(
+    name: str = Form(...),
+    description: str = Form(...),
+    user_associated: str = Form(...),
+    time_submitted: str = Form(...),
+    project_url: Optional[str] = Form(None),
+    project_pic: Optional[UploadFile] = File(None)
+):
+    try:
+        db = get_db()
 
-    # Check if the user exists
-    user = db.users.find_one({"username": project.user_associated})
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    # Create project object and insert it into the database
-    project_dict = project.dict()
-    project_dict["like_count"] = 0  # Ensure like_count is initialized to 0
-    
-    result = db.projects.insert_one(project_dict)
-    
-    project_in_db = ProjectInDB(**project_dict, id=str(result.inserted_id))
-    
-    return project_in_db
+        # Check if the user exists
+        user = db.users.find_one({"username": user_associated})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Process project pic if provided
+        project_pic_url = None
+        if project_pic:
+            # Handle file upload here
+            # Save the file and get its URL
+            pass
+
+        # Create project object
+        project_dict = {
+            "name": name,
+            "description": description,
+            "user_associated": user_associated,
+            "time_submitted": time_submitted,
+            "reviews": [],
+            "like_count": 0,
+            "project_url": project_url,
+            "project_pic": project_pic_url,
+            "liked_by": []
+        }
+        
+        result = db.projects.insert_one(project_dict)
+        project_dict["id"] = str(result.inserted_id)
+        
+        return ProjectInDB(**project_dict)
+
+    except Exception as e:
+        raise HTTPException(status_code=422, detail=str(e))
 
 @router.get("/{project_id}", response_model=ProjectInDB)
 async def get_project(project_id: str):
@@ -41,31 +67,43 @@ async def get_project(project_id: str):
 
 @router.get("/", response_model=dict)
 async def get_all_projects(skip: int = 0, limit: int = 20, sort: str = "like_count"):
-    db = get_db()
+    try:
+        db = get_db()
 
-    # Ensure skip and limit are valid integers and set default values if not
-    skip = max(skip, 0)
-    limit = max(limit, 1)
+        # Ensure skip and limit are valid integers
+        skip = max(0, skip)
+        limit = max(1, min(1000, limit))  # Cap limit at 1000
 
-    # Determine sorting based on the provided parameter (like_count)
-    if sort == "like_count":
-        sort_field = [("like_count", -1)]  # Sort by like_count descending
+        # Set default sort field
+        sort_field = [("like_count", -1)]  # Default sort by likes descending
 
-    # Fetch projects with pagination and sorting
-    projects_cursor = db.projects.find().skip(skip).limit(limit).sort(sort_field)
-    projects_list = [ProjectInDB(**project, id=str(project["_id"])) for project in projects_cursor]
+        # Fetch projects with pagination and sorting
+        cursor = db.projects.find().skip(skip).limit(limit).sort(sort_field)
+        
+        # Convert cursor to list (remove async for)
+        projects_list = []
+        for project in cursor:
+            project_dict = dict(project)
+            project_dict["id"] = str(project_dict["_id"])
+            del project_dict["_id"]
+            projects_list.append(project_dict)
 
-    # Calculate the total number of projects
-    total_projects = db.projects.count_documents({})
+        # Get total count
+        total_projects = db.projects.count_documents({})
+        total_pages = (total_projects + limit - 1) // limit
 
-    # Calculate total pages
-    total_pages = (total_projects + limit - 1) // limit  # This rounds up the total pages
+        return {
+            "projects": projects_list,
+            "totalPages": total_pages,
+            "totalProjects": total_projects
+        }
 
-    return {
-        "projects": projects_list,
-        "totalPages": total_pages,  # Include totalPages in the response
-        "totalProjects": total_projects  # Include total number of projects
-    }
+    except Exception as e:
+        print(f"Error in get_all_projects: {str(e)}")  # Log the error
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Internal server error: {str(e)}"
+        )
 
 # Add this class for the request body
 class LikeRequest(BaseModel):
