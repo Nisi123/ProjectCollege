@@ -135,7 +135,7 @@ const Home = () => {
             Upload your work, get recognized, and connect with like-minded
             creators.
           </p>
-          <div>
+          <div className='buttonContainerHeroSection'>
             <button>
               <Link to='/signup'>Sign In</Link>
             </button>

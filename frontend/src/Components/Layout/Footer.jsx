@@ -16,12 +16,10 @@ const Footer = () => {
       </div>
       <div className='footerText'>
         <p>
-          Talent Showcase is a platform dedicated to empowering creators from
-          all walks of life. Whether you are an artist, writer, coder, or
-          photographer, our goal is to provide you with a space to share your
-          work, connect with like-minded individuals, and grow through
-          collaboration and feedback. Join us in celebrating creativity and
-          talent!
+          Whether you are an artist, writer, coder, or photographer, our goal is
+          to provide you with a space to share your work, connect with
+          like-minded individuals, and grow through collaboration and feedback.
+          Join us in celebrating creativity and talent!
         </p>
       </div>
       <div className='footerLinks'>
