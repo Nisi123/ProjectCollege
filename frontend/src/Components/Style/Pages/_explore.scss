@@ -287,3 +287,142 @@
     }
   }
 }
+
+/* Media Queries */
+@media screen and (max-width: 768px) {
+  .exploreMainTitle {
+    margin-left: 1rem;
+    text-align: center;
+    font-size: 1.75rem;
+  }
+
+  .search-barContainer {
+    margin-top: 2rem;
+    width: 100%;
+    justify-content: center;
+    // padding: 0 1rem;
+  }
+
+  .search-bar {
+    width: 88%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    input {
+      width: 100%;
+      max-width: 300px;
+      height: 2.5rem;
+    }
+
+    select {
+      width: 100%;
+      max-width: 300px;
+      height: 2.5rem;
+    }
+  }
+
+  .projectsContainer {
+    margin: 1rem;
+    gap: 1rem;
+
+    .projectCard {
+      width: 100%;
+      max-width: 300px;
+      height: auto !important;
+      min-height: 22rem;
+    }
+
+    .projectImageContainer {
+      height: 200px;
+    }
+  }
+
+  .modalOverlay .modal {
+    width: 90%;
+    max-width: 500px;
+    margin: 1rem;
+    padding: 1rem;
+
+    .projectDetailsContent {
+      .projectDetailsImage {
+        height: 200px;
+
+        img {
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+
+      .projectDetailsHeader {
+        h2 {
+          font-size: 1.2rem;
+        }
+      }
+
+      .projectDetailsInfo {
+        .projectDescription {
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+
+    button {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .exploreMainTitle {
+    font-size: 1.5rem;
+  }
+
+  .projectsContainer {
+    .projectCard {
+      max-width: 100%;
+    }
+
+    .projectInfo {
+      h2 {
+        font-size: 0.9rem;
+      }
+
+      p {
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  .modalOverlay .modal {
+    .projectDetailsContent {
+      .projectDetailsImage {
+        height: 150px;
+      }
+
+      .projectDetailsHeader {
+        h2 {
+          font-size: 1.1rem;
+        }
+      }
+    }
+
+    .projectReviews {
+      .reviewForm {
+        div input {
+          width: 100%;
+        }
+      }
+
+      .reviewsContainer {
+        max-height: 150px;
+      }
+    }
+  }
+}

@@ -363,12 +363,12 @@
 
 .projectDetailsModal .closeButton {
   position: absolute;
-  top: 2rem;
+  top: 3rem;
   right: 27rem;
   cursor: pointer;
   padding: 0.5rem 1rem !important;
   background: transparent !important;
-  color: var(--MainBgColor) !important;
+  color: rgba(0, 0, 0, 0.727) !important;
   border: none !important;
   font-size: 2rem;
 }
@@ -428,4 +428,173 @@
 
 .noReviews {
   color: rgba(0, 0, 0, 0.686);
+}
+
+/* Media Queries */
+@media screen and (max-width: 768px) {
+  .userpageMainHeader {
+    padding: 1rem;
+
+    img {
+      height: 6rem;
+      width: 6rem;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+  }
+
+  .settingsButton {
+    margin-top: 3rem;
+    padding-right: 0rem;
+  }
+
+  .userpageDescriptionContainer {
+    padding: 0 1rem;
+
+    div {
+      width: 100%;
+    }
+
+    .userpageDescriptionUserDescription {
+      p {
+        font-size: 0.8rem;
+      }
+    }
+
+    .userpageDescriptionUserInfo {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+
+      p {
+        font-size: 0.7rem;
+      }
+    }
+  }
+
+  .UserPageSearchBar {
+    margin: 1rem;
+    width: auto;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    input {
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .addProjectButton,
+    .deleteProjectsButton,
+    .bulkDeleteButton {
+      width: 100%;
+      max-width: 300px;
+    }
+  }
+
+  .UserPageProjectsContainer {
+    margin: 2rem 1rem;
+    padding-left: 0;
+    justify-content: center;
+
+    .projectCard {
+      width: 100%;
+      max-width: 300px;
+      height: auto !important;
+      min-height: 22rem;
+    }
+  }
+
+  .modal {
+    width: 90%;
+    max-width: 300px;
+    padding: 1.5rem;
+
+    form {
+      width: 88%;
+
+      input {
+        width: 100%;
+      }
+
+      .addImageForm {
+        width: 100%;
+
+        &::file-selector-button {
+          padding: 0.6rem 1.5rem;
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+
+  .projectDetailsModal {
+    width: 90%;
+    max-width: 300px;
+    height: auto;
+    position: relative;
+
+    .closeButton {
+      position: absolute;
+      color: rgba(0, 0, 0, 0.727) !important;
+      font-size: 1.8rem;
+      right: -1rem;
+      top: -1.5rem;
+    }
+
+    .projectDetailsImage img {
+      height: 200px;
+    }
+  }
+
+  .projectCreateFormButton {
+    gap: 0rem;
+    button {
+      font-size: 0.9rem;
+      max-width: 300px;
+    }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .userpageMainHeader {
+    h1 {
+      font-size: 1.5rem;
+    }
+
+    img {
+      height: 5rem;
+      width: 5rem;
+    }
+  }
+
+  .userpageDescriptionUserInfo {
+    font-size: 0.75rem;
+  }
+
+  .projectDetailsModal {
+    .projectDetailsImage img {
+      height: 150px;
+    }
+
+    .projectDetailsHeader h2 {
+      font-size: 1.2rem;
+    }
+
+    .projectDetailsInfo p {
+      font-size: 0.9rem;
+    }
+  }
+
+  .settingsButton {
+    font-size: 1.5rem;
+    top: 1rem;
+    right: 1rem;
+  }
 }
