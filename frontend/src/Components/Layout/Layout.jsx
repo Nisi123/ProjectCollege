@@ -9,7 +9,7 @@ const Layout = ({ children }) => {
   const userId = user.userId;
 
   if (location.pathname === "/signup" || location.pathname === "/login") {
-    return <>{children}</>; // Render only the child components
+    return <>{children}</>;
   }
 
   return (

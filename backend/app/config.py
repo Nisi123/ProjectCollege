@@ -5,6 +5,6 @@ class Settings(BaseSettings):
     DATABASE_NAME: str
 
     class Config:
-        env_file = ".env"  # This tells Pydantic to look for variables in the .env file
+        env_file = ".env"
 
 settings = Settings()

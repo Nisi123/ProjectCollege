@@ -64,7 +64,7 @@ const Explore = () => {
     };
 
     fetchProjects();
-  }, []); // Run once when the component mounts
+  }, []);
 
   // Filter projects based on the search term and filter type
   const handleSearch = (term) => {
@@ -73,17 +73,15 @@ const Explore = () => {
       project[filterType]?.toLowerCase().includes(term.toLowerCase())
     );
     setFilteredProjects(filtered);
-    setTotalPages(Math.ceil(filtered.length / itemsPerPage)); // Update total pages after filtering
+    setTotalPages(Math.ceil(filtered.length / itemsPerPage));
   };
 
-  // Handle page change
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
     }
   };
 
-  // Paginate the filtered projects (take only the items for the current page)
   const paginatedProjects = filteredProjects.slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage
@@ -184,7 +182,7 @@ const Explore = () => {
       return;
     }
 
-    if (!newReview.trim()) return; // Don't submit empty reviews
+    if (!newReview.trim()) return;
 
     try {
       const response = await axios.post(
@@ -204,7 +202,7 @@ const Explore = () => {
 
       if (response.data) {
         setSelectedProject(response.data);
-        setNewReview(""); // Clear the input
+        setNewReview("");
       }
     } catch (error) {
       console.error("Error adding review:", error.response?.data || error);
@@ -245,7 +243,7 @@ const Explore = () => {
             <div
               className='projectCard explorePageProjectCard'
               key={project.id}
-              onClick={() => openProjectDetails(project)} // Add this onClick handler
+              onClick={() => openProjectDetails(project)}
             >
               <div className='projectImageContainer'>
                 <img

@@ -8,18 +8,18 @@ class User(BaseModel):
     password: str
     profile_pic: Optional[str] = "No Profile Pic"
     description: Optional[str] = "No Description"
-    position: Optional[str] = "User Position"  # New field
-    year_of_birth: Optional[int] = 0 # New field
-    level: Optional[str] = "No Level"  # New field
+    position: Optional[str] = "User Position"
+    year_of_birth: Optional[int] = 0
+    level: Optional[str] = "No Level"
 
 class Project(BaseModel):
     id: str
     name: str
     description: Optional[str] = ""
     like_count: int = 0
-    project_pic: Optional[str] = None  # Add this field
-    project_url: Optional[str] = None  # Add this field too
-    reviews: List[str] = []  # Make sure reviews are included in the model
+    project_pic: Optional[str] = None
+    project_url: Optional[str] = None
+    reviews: List[str] = []
 
 class UserInDB(User):
     id: str

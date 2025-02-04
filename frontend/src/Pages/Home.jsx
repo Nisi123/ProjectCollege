@@ -8,7 +8,6 @@ import HeroImage2 from "./../Media/HeroImage2.png";
 import HIW1 from "./../Media/HIW1.png";
 import HIW2 from "./../Media/HIW2.png";
 import HIW3 from "./../Media/HIW3.png";
-import UserImage from "./../Media/User.png";
 import { FaHeart } from "react-icons/fa6";
 
 const Home = () => {

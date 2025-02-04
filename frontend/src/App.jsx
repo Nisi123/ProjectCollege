@@ -5,8 +5,8 @@ import Explore from "./Pages/Explore";
 import Layout from "./components/Layout/Layout";
 import UserPage from "./Pages/UserPage";
 import SignupLogin from "./Pages/Signup";
-import ProtectedRoute from "./Services/protectedRoute"; // Import ProtectedRoute
-import ParentComponent from "./Components/ParentComponent"; // Import ParentComponent
+import ProtectedRoute from "./Services/protectedRoute";
+import ParentComponent from "./Components/ParentComponent";
 
 function App() {
   return (

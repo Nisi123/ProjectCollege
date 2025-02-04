@@ -11,9 +11,9 @@ class Project(BaseModel):
     user_associated: str
     reviews: List[str] = []
     like_count: int = 0
-    project_pic: Optional[str] = None  # Changed from "No Project Pic"
-    project_url: Optional[str] = None  # For external project links
-    liked_by: List[str] = []  # Add this field to track who liked the project
+    project_pic: Optional[str] = None  
+    project_url: Optional[str] = None  
+    liked_by: List[str] = []
 
     @validator('time_submitted')
     def validate_time(cls, v):
@@ -27,7 +27,6 @@ class ProjectInDB(Project):
     id: str
 
     class Config:
-        # Make sure the json_encoders block is properly indented
         json_encoders = {
             ObjectId: str  # Convert ObjectId to string during serialization
         }

@@ -16,10 +16,10 @@ const UserProfile = () => {
 
   const [user, setUser] = useState(null);
   const [filteredProjects, setFilteredProjects] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(""); // Search term for projects
-  const [page, setPage] = useState(1); // Current page for projects
-  const [totalPages, setTotalPages] = useState(1); // Total pages for pagination
-  const [itemsPerPage] = useState(10); // Number of projects per page
+  const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [itemsPerPage] = useState(10);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -74,11 +74,11 @@ const UserProfile = () => {
     // Clear user info and token from localStorage
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    navigate("/login"); // Redirect to login page
+    navigate("/login");
   };
 
   const handleSearch = (term) => {
-    if (!user || !user.projects) return; // Ensure user data exists
+    if (!user || !user.projects) return;
     setSearchTerm(term);
     const filtered = user.projects.filter((project) => {
       const name = project.name || ""; // Default to empty string if undefined
@@ -112,13 +112,11 @@ const UserProfile = () => {
         formData.append("project_url", newProject.project_url);
       }
 
-      // Log the file being uploaded
       if (newProject.project_pic) {
         console.log("Uploading file:", newProject.project_pic);
         formData.append("project_pic", newProject.project_pic);
       }
 
-      // Log the FormData content
       for (let pair of formData.entries()) {
         console.log(pair[0], pair[1]);
       }
@@ -157,7 +155,7 @@ const UserProfile = () => {
     try {
       const userData = JSON.parse(localStorage.getItem("user"));
       await axios.delete(`http://localhost:8000/users/${userData.userId}`);
-      logout(); // Use existing logout function to redirect to login
+      logout();
     } catch (error) {
       console.error("Error deleting profile:", error);
       alert("Failed to delete profile. Please try again.");
@@ -232,8 +230,6 @@ const UserProfile = () => {
   //   console.log("Logging out...");
   //   closeModal(); // Close the modal after logging out
   // };
-
-  // Update the image URL helper functions
   const getImageUrl = (url) => {
     if (!url || url === "No Profile Pic") {
       return `http://localhost:8000/uploads/default-profile-pic.png?t=${Date.now()}`;
@@ -249,7 +245,6 @@ const UserProfile = () => {
       return `http://localhost:8000/uploads/default-project-pic.png?t=${Date.now()}`;
     }
 
-    // If URL is relative (starts with /uploads), prepend the backend URL
     if (url.startsWith("/uploads")) {
       return `http://localhost:8000${url}?t=${Date.now()}`;
     }

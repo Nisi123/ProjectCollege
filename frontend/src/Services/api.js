@@ -1,6 +1,4 @@
-// src/utils/api.js
-
-const API_URL = "http://localhost:8000"; // Replace with your backend API URL
+const API_URL = "http://localhost:8000";
 
 export const signUp = async (userData) => {
   const response = await fetch(`${API_URL}/users/`, {

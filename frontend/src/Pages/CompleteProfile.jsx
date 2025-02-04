@@ -50,16 +50,13 @@ const CompleteProfile = ({ userId }) => {
         }
       );
       console.log("Profile updated successfully:", response.data);
-
-      // Show success message
       setSuccessMessage("Profile updated successfully!");
 
-      // Update localStorage with new data after profile update (optional)
       userData.description = response.data.description;
       userData.position = response.data.position;
       userData.year_of_birth = response.data.year_of_birth;
       userData.level = response.data.level;
-      localStorage.setItem("user", JSON.stringify(userData)); // Update user info in localStorage
+      localStorage.setItem("user", JSON.stringify(userData));
 
       // Redirect to user page after 1 second
       setTimeout(() => {

@@ -7,7 +7,6 @@ UPLOAD_DIR = "uploads"
 
 def save_upload_file(upload_file: UploadFile, user_associated: str) -> str:
     try:
-        # Ensure upload directory exists
         os.makedirs(UPLOAD_DIR, exist_ok=True)
         
         # Create unique filename with timestamp

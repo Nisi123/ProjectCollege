@@ -14,7 +14,6 @@ function SignupLogin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation check
     if (!email || !password || (isSignup && !username)) {
       setError("All fields are required.");
       return;
@@ -47,18 +46,17 @@ function SignupLogin() {
         // Redirect to user page after signup
         navigate(`/user/${response.data.id}`);
       } else {
-        // For login
         const userData = {
           username: response.data.username,
           userId: response.data.id,
           email: response.data.email,
           profile_pic: response.data.profile_pic,
         };
-        localStorage.setItem("user", JSON.stringify(userData)); // Store user info
-        localStorage.setItem("token", response.data.token); // Save token
-        navigate("/"); // Redirect to home page
+        localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("token", response.data.token);
+        navigate("/");
       }
-      setError(null); // Clear any previous errors
+      setError(null);
     } catch (err) {
       const errorResponse = err.response?.data || {
         detail: "An error occurred.",
