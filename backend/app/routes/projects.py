@@ -88,8 +88,11 @@ async def get_all_projects(skip: int = 0, limit: int = 20, sort: str = "like_cou
         # Convert cursor to list (remove async for)
         projects_list = []
         for project in cursor:
+            # Get user info for each project
+            user = db.users.find_one({"username": project["user_associated"]})
             project_dict = dict(project)
             project_dict["id"] = str(project_dict["_id"])
+            project_dict["user_id"] = str(user["_id"]) if user else None  # Add user_id
             del project_dict["_id"]
             projects_list.append(project_dict)
 
@@ -287,4 +290,29 @@ async def delete_project(project_id: str):
         
     except Exception as e:
         print(f"Error in delete_project: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/by-user/{user_id}")
+async def get_projects_by_user_id(user_id: str):
+    try:
+        db = get_db()
+        # Get user first to find their username
+        user = db.users.find_one({"_id": ObjectId(user_id)})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        # Get all projects for this user
+        projects = list(db.projects.find({"user_associated": user["username"]}))
+        
+        # Format projects
+        formatted_projects = []
+        for project in projects:
+            project["id"] = str(project["_id"])
+            del project["_id"]
+            formatted_projects.append(project)
+            
+        return {"projects": formatted_projects}
+        
+    except Exception as e:
+        print(f"Error getting user projects: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))

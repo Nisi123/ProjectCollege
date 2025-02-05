@@ -796,9 +796,9 @@
   padding: 0.5rem 0.5rem;
 }
 .projectsContainer .projectInfo .submittedBy {
+  color: var(--MainBgColor);
   font-size: 0.8rem;
   font-weight: 500;
-  margin-top: 0.5rem;
   padding: 0 0.5rem;
 }
 .projectsContainer .projectInfoTitleandLike {
@@ -835,6 +835,15 @@
 .projectsContainer .projectInfoTitleandLike .likeButton p {
   font-size: 1rem;
   padding: 0;
+}
+
+.projectDetailsHeader {
+  height: 3rem;
+}
+
+.projectUserAssociated {
+  color: var(--MainBgColor) !important;
+  margin-top: 0.5rem !important;
 }
 
 .likesCount {

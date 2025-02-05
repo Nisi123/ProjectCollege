@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { FaRegHeart, FaHeart } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5"; // Add this import
+import { useNavigate } from "react-router-dom";
 
 const Explore = () => {
   const [projects, setProjects] = useState([]); // All projects fetched from the backend
@@ -16,6 +17,7 @@ const Explore = () => {
   const [selectedProject, setSelectedProject] = useState(null); // Add this state
   const [newReview, setNewReview] = useState("");
   const itemsPerPage = 20;
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Get current user from localStorage
@@ -210,6 +212,20 @@ const Explore = () => {
     }
   };
 
+  const handleUserClick = (e, username, userId) => {
+    e.stopPropagation();
+    if (!userId) {
+      console.error("No user ID available");
+      return;
+    }
+
+    if (username === currentUser.username) {
+      navigate("/profile");
+    } else {
+      navigate(`/user/${userId}`);
+    }
+  };
+
   return (
     <div>
       <h1 className='exploreMainTitle'>Explore Projects</h1>
@@ -275,7 +291,15 @@ const Explore = () => {
                   </div>
                 </div>
                 <p>{project.description}</p>
-                <p className='submittedBy'>{project.user_associated}</p>
+                <p
+                  className='submittedBy'
+                  onClick={(e) =>
+                    handleUserClick(e, project.user_associated, project.user_id)
+                  }
+                  style={{ cursor: "pointer" }}
+                >
+                  {project.user_associated}
+                </p>
               </div>
             </div>
           ))
@@ -324,6 +348,19 @@ const Explore = () => {
               <div className='projectDetailsInfo'>
                 <p className='projectDescription'>
                   {selectedProject.description}
+                </p>
+                <p
+                  className='projectUserAssociated'
+                  onClick={(e) =>
+                    handleUserClick(
+                      e,
+                      selectedProject.user_associated,
+                      selectedProject.user_id
+                    )
+                  }
+                  style={{ cursor: "pointer" }}
+                >
+                  {selectedProject.user_associated}
                 </p>
                 <div>
                   {selectedProject.project_url && (

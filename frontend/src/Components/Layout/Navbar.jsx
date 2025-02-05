@@ -23,11 +23,7 @@ const Navbar = ({ userId }) => {
         </li>
       </ul>
       <div className='navbarImage'>
-        <Link to={`/user/${userId}`}>
-          {/* <img
-            src={User}
-            alt='User'
-          /> */}
+        <Link to='/profile'>
           <FaRegCircleUser />
         </Link>
       </div>

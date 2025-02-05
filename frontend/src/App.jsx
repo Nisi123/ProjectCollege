@@ -7,6 +7,7 @@ import UserPage from "./Pages/UserPage";
 import SignupLogin from "./Pages/Signup";
 import ProtectedRoute from "./Services/protectedRoute";
 import ParentComponent from "./Components/ParentComponent";
+import OtherUserPage from "./Pages/OtherUserPage";
 
 function App() {
   return (
@@ -33,12 +34,16 @@ function App() {
             element={<ProtectedRoute element={<Explore />} />}
           />
           <Route
-            path='/user/:userId'
+            path='/profile'
             element={<ProtectedRoute element={<UserPage />} />}
           />
           <Route
             path='/complete-profile'
             element={<ParentComponent />}
+          />
+          <Route
+            path='/user/:userId'
+            element={<ProtectedRoute element={<OtherUserPage />} />}
           />
         </Routes>
       </Layout>
