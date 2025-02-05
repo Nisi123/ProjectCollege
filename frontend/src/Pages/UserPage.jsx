@@ -62,7 +62,6 @@ const UserProfile = () => {
       const response = await axios.get(
         `http://localhost:8000/users/${userData.userId}`
       );
-      console.log("User data received:", response.data);
 
       // Log each project's images for debugging
       response.data.projects?.forEach((project) => {
@@ -154,7 +153,6 @@ const UserProfile = () => {
         }
       );
 
-      console.log("Project created:", response.data);
       await fetchUserData();
       setProjectModalOpen(false);
       setNewProject({
@@ -323,8 +321,6 @@ const UserProfile = () => {
     (page - 1) * itemsPerPage,
     page * itemsPerPage
   );
-
-  console.log(user);
 
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
