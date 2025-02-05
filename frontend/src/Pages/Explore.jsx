@@ -226,6 +226,12 @@ const Explore = () => {
     }
   };
 
+  const handleModalClick = (e) => {
+    if (e.target.classList.contains("modalOverlay")) {
+      setSelectedProject(null);
+    }
+  };
+
   return (
     <div>
       <h1 className='exploreMainTitle'>Explore Projects</h1>
@@ -310,14 +316,11 @@ const Explore = () => {
 
       {/* Add Project Details Modal */}
       {selectedProject && (
-        <div className='modalOverlay projectDetailsModalOverlay'>
+        <div
+          className='modalOverlay projectDetailsModalOverlay'
+          onClick={handleModalClick}
+        >
           <div className='modal projectDetailsModal'>
-            <button
-              onClick={() => setSelectedProject(null)}
-              className='closeButton'
-            >
-              <IoClose />
-            </button>
             <div className='projectDetailsContent'>
               <div className='projectDetailsImage'>
                 <img

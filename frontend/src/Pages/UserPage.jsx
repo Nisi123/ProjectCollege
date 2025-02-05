@@ -7,6 +7,8 @@ import {
   IoAdd,
   IoCloseCircleOutline,
   IoClose,
+  IoChevronBack,
+  IoChevronForward,
 } from "react-icons/io5";
 import { FaRegHeart } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
@@ -31,6 +33,7 @@ const UserProfile = () => {
     reviews: [],
     project_url: "",
     project_pic: null,
+    project_images: [], // Add this field
   });
   const [imageLoading, setImageLoading] = useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -39,6 +42,9 @@ const UserProfile = () => {
   const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [previewImages, setPreviewImages] = useState([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("user"));
@@ -57,6 +63,15 @@ const UserProfile = () => {
         `http://localhost:8000/users/${userData.userId}`
       );
       console.log("User data received:", response.data);
+
+      // Log each project's images for debugging
+      response.data.projects?.forEach((project) => {
+        console.log(`Project ${project.name} images:`, {
+          main: project.project_pic,
+          additional: project.project_images,
+        });
+      });
+
       setUser(response.data);
       setFilteredProjects(response.data.projects || []);
       setTotalPages(
@@ -112,13 +127,21 @@ const UserProfile = () => {
         formData.append("project_url", newProject.project_url);
       }
 
+      // Append main project pic
       if (newProject.project_pic) {
-        console.log("Uploading file:", newProject.project_pic);
         formData.append("project_pic", newProject.project_pic);
       }
 
+      // Append additional images - important to use the same field name for all images
+      if (newProject.project_images) {
+        newProject.project_images.forEach((image) => {
+          formData.append("project_images", image);
+        });
+      }
+
+      // Log formData contents for debugging
       for (let pair of formData.entries()) {
-        console.log(pair[0], pair[1]);
+        console.log("FormData Content:", pair[0], pair[1]);
       }
 
       const response = await axios.post(
@@ -141,6 +164,7 @@ const UserProfile = () => {
         reviews: [],
         project_url: "",
         project_pic: null,
+        project_images: [], // Reset this field
       });
     } catch (error) {
       console.error("Error creating project:", error.response?.data || error);
@@ -150,6 +174,58 @@ const UserProfile = () => {
       );
     }
   };
+
+  // Add this new function to handle multiple image selection
+  const handleImageSelection = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      // Store all files
+      setNewProject({
+        ...newProject,
+        project_pic: files[0],
+        project_images: files.slice(1), // Rest of the images
+      });
+
+      // Create preview URLs for all images
+      const newPreviewImages = files.map((file) => ({
+        file,
+        preview: URL.createObjectURL(file),
+      }));
+      setPreviewImages(newPreviewImages);
+    }
+  };
+
+  // Add function to remove image
+  const removeImage = (index) => {
+    const updatedFiles = [...newProject.project_images];
+    if (index === 0) {
+      // If removing main image, make the next image the main image
+      setNewProject({
+        ...newProject,
+        project_pic: updatedFiles.length > 0 ? updatedFiles[0] : null,
+        project_images: updatedFiles.slice(1),
+      });
+    } else {
+      // Remove from additional images
+      updatedFiles.splice(index - 1, 1);
+      setNewProject({
+        ...newProject,
+        project_images: updatedFiles,
+      });
+    }
+
+    // Clean up preview URL and remove from previews
+    URL.revokeObjectURL(previewImages[index].preview);
+    const updatedPreviews = previewImages.filter((_, i) => i !== index);
+    setPreviewImages(updatedPreviews);
+  };
+
+  // Clean up preview URLs when component unmounts
+  useEffect(() => {
+    return () => {
+      previewImages.forEach((image) => URL.revokeObjectURL(image.preview));
+    };
+  }, []);
 
   const handleDeleteProfile = async () => {
     try {
@@ -209,6 +285,36 @@ const UserProfile = () => {
     setSelectedProject(project);
   };
 
+  const handleModalClick = (e) => {
+    if (e.target.classList.contains("modalOverlay")) {
+      setSelectedProject(null);
+    }
+  };
+
+  const handleNextImage = (e) => {
+    e.stopPropagation();
+    if (selectedProject) {
+      const images = [
+        selectedProject.project_pic,
+        ...(selectedProject.project_images || []),
+      ].filter(Boolean);
+      setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    }
+  };
+
+  const handlePrevImage = (e) => {
+    e.stopPropagation();
+    if (selectedProject) {
+      const images = [
+        selectedProject.project_pic,
+        ...(selectedProject.project_images || []),
+      ].filter(Boolean);
+      setCurrentImageIndex(
+        (prev) => (prev - 1 + images.length) % images.length
+      );
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
@@ -232,25 +338,30 @@ const UserProfile = () => {
   // };
   const getImageUrl = (url) => {
     if (!url || url === "No Profile Pic") {
-      return `http://localhost:8000/uploads/default-profile-pic.png?t=${Date.now()}`;
+      return `http://localhost:8000/uploads/default-profile-pic.png`;
     }
 
-    // Add cache-busting timestamp
-    const baseUrl = url.split("?")[0];
-    return `${baseUrl}?t=${Date.now()}`;
+    // If the URL starts with 'uploads/', add the base URL
+    if (url.startsWith("uploads/")) {
+      return `http://localhost:8000/${url}`;
+    }
+
+    // Return the full URL as is
+    return url;
   };
 
   const getProjectImageUrl = (url) => {
     if (!url) {
-      return `http://localhost:8000/uploads/default-project-pic.png?t=${Date.now()}`;
+      return `http://localhost:8000/uploads/default-project-pic.png`;
     }
 
-    if (url.startsWith("/uploads")) {
-      return `http://localhost:8000${url}?t=${Date.now()}`;
+    // If the URL starts with 'uploads/', add the base URL
+    if (url.startsWith("uploads/")) {
+      return `http://localhost:8000/${url}`;
     }
 
-    // Add cache-busting timestamp
-    return `${url}?t=${Date.now()}`;
+    // Return the full URL as is
+    return url;
   };
 
   // Add image loading handler
@@ -406,17 +517,46 @@ const UserProfile = () => {
                     })
                   }
                 />
-                <input
-                  className='addImageForm'
-                  type='file'
-                  accept='image/*'
-                  onChange={(e) =>
-                    setNewProject({
-                      ...newProject,
-                      project_pic: e.target.files[0],
-                    })
-                  }
-                />
+                <div className='imageUploadSection'>
+                  <input
+                    className='addImageForm'
+                    type='file'
+                    accept='image/*'
+                    multiple
+                    onChange={handleImageSelection}
+                  />
+
+                  {/* Preview selected images */}
+                  {previewImages.length > 0 && (
+                    <div className='selectedImagesPreview'>
+                      {previewImages.map((image, index) => (
+                        <div
+                          key={index}
+                          className='previewImageContainer'
+                        >
+                          <img
+                            src={image.preview}
+                            alt={`Preview ${index + 1}`}
+                          />
+                          <span
+                            className={`imageLabel ${
+                              index === 0 ? "mainImage" : ""
+                            }`}
+                          >
+                            {index === 0 ? "Main" : `${index}`}
+                          </span>
+                          <button
+                            type='button'
+                            onClick={() => removeImage(index)}
+                            className='removeImageBtn'
+                          >
+                            <IoClose />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <div className='projectCreateFormButton'>
                   <button type='submit'>Create Project</button>
                   <button
@@ -568,24 +708,74 @@ const UserProfile = () => {
 
       {/* Add Project Details Modal */}
       {selectedProject && (
-        <div className='modalOverlay projectDetailsModalOverlay'>
+        <div
+          className='modalOverlay projectDetailsModalOverlay'
+          onClick={handleModalClick}
+        >
           <div className='modal projectDetailsModal'>
-            <button
-              onClick={() => setSelectedProject(null)}
-              className='closeButton'
-            >
-              <IoClose />
-            </button>
             <div className='projectDetailsContent'>
-              <div className='projectDetailsImage'>
-                <img
-                  src={getProjectImageUrl(selectedProject.project_pic)}
-                  alt={selectedProject.name}
-                  onError={(e) => {
-                    e.target.src = getProjectImageUrl(null);
-                  }}
-                />
+              <div className='projectImageSlider'>
+                <div className='projectDetailsImage'>
+                  {(() => {
+                    // Combine main image and additional images
+                    const allImages = [
+                      selectedProject.project_pic,
+                      ...(selectedProject.project_images || []),
+                    ].filter(Boolean);
+
+                    return (
+                      <img
+                        src={getProjectImageUrl(
+                          allImages[currentImageIndex] || null
+                        )} // Add || null here
+                        alt={selectedProject.name}
+                        onError={(e) => {
+                          e.target.src = getProjectImageUrl(null);
+                        }}
+                      />
+                    );
+                  })()}
+
+                  {/* Only show navigation if there are multiple images */}
+                  {(selectedProject.project_images?.length > 0 ||
+                    selectedProject.project_pic) && (
+                    <>
+                      <button
+                        className='sliderButton prev'
+                        onClick={handlePrevImage}
+                      >
+                        <IoChevronBack />
+                      </button>
+                      <button
+                        className='sliderButton next'
+                        onClick={handleNextImage}
+                      >
+                        <IoChevronForward />
+                      </button>
+                      <div className='sliderDots'>
+                        {[
+                          selectedProject.project_pic,
+                          ...(selectedProject.project_images || []),
+                        ]
+                          .filter(Boolean)
+                          .map((_, index) => (
+                            <button
+                              key={index}
+                              className={`dot ${
+                                index === currentImageIndex ? "active" : ""
+                              }`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setCurrentImageIndex(index);
+                              }}
+                            />
+                          ))}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
+              {/* ...rest of modal content... */}
               <div className='projectDetailsHeader'>
                 <h2>{selectedProject.name}</h2>
                 <div className='likesCount'>

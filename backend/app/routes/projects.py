@@ -18,7 +18,8 @@ async def create_project(
     user_associated: str = Form(...),
     time_submitted: str = Form(...),
     project_url: Optional[str] = Form(None),
-    project_pic: Optional[UploadFile] = File(None)
+    project_pic: Optional[UploadFile] = File(None),
+    project_images: List[UploadFile] = File([])  # Add this parameter
 ):
     try:
         db = get_db()
@@ -27,11 +28,27 @@ async def create_project(
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
-        # Process project pic if provided
+        # Process main project pic
         project_pic_url = None
         if project_pic:
-            relative_url = save_upload_file(project_pic, user_associated)
-            project_pic_url = f"http://localhost:8000{relative_url}"  # Create full URL
+            try:
+                relative_url = save_upload_file(project_pic, user_associated)
+                project_pic_url = f"http://localhost:8000{relative_url}"
+            except Exception as e:
+                print(f"Error saving main project pic: {e}")
+                raise HTTPException(status_code=500, detail="Failed to save main project image")
+            
+        # Process additional project images
+        project_image_urls = []
+        for idx, image in enumerate(project_images):
+            try:
+                # Add index to filename to make it unique
+                relative_url = save_upload_file(image, f"{user_associated}_additional_{idx}")
+                image_url = f"http://localhost:8000{relative_url}"
+                project_image_urls.append(image_url)
+            except Exception as e:
+                print(f"Error saving additional image {idx}: {e}")
+                continue
             
         # Create project object
         project_dict = {
@@ -43,8 +60,12 @@ async def create_project(
             "like_count": 0,
             "project_url": project_url,
             "project_pic": project_pic_url,
+            "project_images": project_image_urls,  # Add this field
             "liked_by": []
         }
+        
+        # Debug print
+        print("Creating project with:", project_dict)
         
         result = db.projects.insert_one(project_dict)
         project_dict["id"] = str(result.inserted_id)

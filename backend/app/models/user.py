@@ -18,6 +18,7 @@ class Project(BaseModel):
     description: Optional[str] = ""
     like_count: int = 0
     project_pic: Optional[str] = None
+    project_images: List[str] = []  # Add this field
     project_url: Optional[str] = None
     reviews: List[str] = []
 

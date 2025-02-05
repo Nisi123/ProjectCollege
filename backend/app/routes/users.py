@@ -7,7 +7,7 @@ from app.services.user_service import create_user, update_user_profile, login_us
 from pydantic import BaseModel
 from datetime import datetime
 
-router = APIRouter()
+router = APIRouter()    
 
 @router.post("/", response_model=UserInDB)
 async def create_user_route(user: User):
@@ -15,10 +15,39 @@ async def create_user_route(user: User):
 
 @router.get("/{user_id}", response_model=UserInDBResponse)
 async def get_user(user_id: str):
-    user_data = await get_user_by_id(user_id)
-    if user_data is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user_data
+    try:
+        db = get_db()
+        user = db.users.find_one({"_id": ObjectId(user_id)})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        # Fetch all projects for this user with proper image URLs
+        projects = list(db.projects.find({"user_associated": user["username"]}))
+        formatted_projects = []
+        
+        for project in projects:
+            project_dict = dict(project)
+            project_dict["id"] = str(project_dict["_id"])
+            del project_dict["_id"]
+            
+            # Ensure project_images exists and is a list
+            if "project_images" not in project_dict:
+                project_dict["project_images"] = []
+                
+            # Log the project data for debugging
+            print(f"Project data: {project_dict}")
+            
+            formatted_projects.append(project_dict)
+
+        user["id"] = str(user["_id"])
+        del user["_id"]
+        user["projects"] = formatted_projects
+
+        return UserInDBResponse(**user)
+        
+    except Exception as e:
+        print(f"Error fetching user data: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/", response_model=List[UserInDBResponse])
 async def get_all_users_route():
@@ -81,15 +110,13 @@ async def complete_profile(
         update_dict["level"] = level
     
     if profile_pic:
-        timestamp = int(datetime.now().timestamp())
-        safe_filename = f"profile_{timestamp}_{profile_pic.filename.replace(' ', '_')}"
-        file_location = f"uploads/{safe_filename}"
         try:
-            with open(file_location, "wb+") as file_object:
-                content = await profile_pic.read()
-                file_object.write(content)
-            update_dict["profile_pic"] = file_location
+            # Use the file handler utility for consistent file saving
+            file_path = save_upload_file(profile_pic, f"profile_{user_id}")
+            update_dict["profile_pic"] = file_path  # Save the relative path
+            print(f"Profile picture saved at: {file_path}")
         except Exception as e:
+            print(f"Error saving profile picture: {e}")
             raise HTTPException(status_code=500, detail=f"Could not upload file: {e}")
 
     updated_user = await update_user_profile(user_id, update_dict)

@@ -12,6 +12,7 @@ class Project(BaseModel):
     reviews: List[str] = []
     like_count: int = 0
     project_pic: Optional[str] = None  
+    project_images: List[str] = []  # Add this field for multiple images
     project_url: Optional[str] = None  
     liked_by: List[str] = []
 
