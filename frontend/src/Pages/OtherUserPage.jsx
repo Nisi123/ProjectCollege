@@ -282,7 +282,7 @@ const OtherUserProfile = () => {
               )}
             </div>
             <div className='projectReviews'>
-              <h3>Reviews</h3>
+              {/* <h3>Reviews</h3> */}
               <div className='reviewsContainer'>
                 {selectedProject.reviews?.length > 0 ? (
                   <div className='reviewsList'>
@@ -296,7 +296,7 @@ const OtherUserProfile = () => {
                     ))}
                   </div>
                 ) : (
-                  <p className='noReviews'>No reviews yet</p>
+                  <p className='noReviews'>No Comments</p>
                 )}
               </div>
             </div>

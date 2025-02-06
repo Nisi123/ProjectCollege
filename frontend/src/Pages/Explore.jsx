@@ -91,9 +91,28 @@ const Explore = () => {
 
   const getProjectImageUrl = (url) => {
     if (!url) {
-      return `http://localhost:8000/uploads/default-project-pic.png?t=${Date.now()}`;
+      return `http://localhost:8000/uploads/default-project-pic.png`;
     }
-    return url;
+
+    // Handle full URLs that might contain backslashes
+    if (url.includes("http://localhost:8000")) {
+      // Replace backslashes with forward slashes and ensure proper formatting
+      return url
+        .replace(/\\/g, "/")
+        .replace(
+          "http://localhost:8000uploads",
+          "http://localhost:8000/uploads"
+        );
+    }
+
+    // Handle relative paths
+    const cleanPath = url.replace(/\\/g, "/"); // Replace any backslashes with forward slashes
+    if (cleanPath.startsWith("uploads/")) {
+      return `http://localhost:8000/${cleanPath}`;
+    }
+
+    // If it's just a filename, add the full path
+    return `http://localhost:8000/uploads/${cleanPath}`;
   };
 
   const handleLike = async (projectId, e) => {
@@ -379,7 +398,7 @@ const Explore = () => {
                 </div>
               </div>
               <div className='projectReviews'>
-                <h3>Reviews</h3>
+                {/* <h3>Comments</h3> */}
                 <form
                   onSubmit={handleReviewSubmit}
                   className='reviewForm'
@@ -409,7 +428,7 @@ const Explore = () => {
                       ))}
                     </div>
                   ) : (
-                    <p className='noReviews'>No reviews yet</p>
+                    <p className='noReviews'>No comments</p>
                   )}
                 </div>
               </div>

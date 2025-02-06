@@ -60,7 +60,7 @@ const CompleteProfile = ({ userId }) => {
 
       // Redirect to user page after 1 second
       setTimeout(() => {
-        navigate(`/user/${userId}`);
+        navigate(`/profile`);
       }, 1000);
     } catch (error) {
       console.error("Error updating profile:", error);
