@@ -1,14 +1,30 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import {
+  FaUsers,
+  FaProjectDiagram,
+  FaChartBar,
+  FaSearch,
+  FaUserPlus,
+  FaChartLine,
+  FaExclamationTriangle,
+} from "react-icons/fa";
 
 function AdminPanel() {
-  const [activeTab, setActiveTab] = useState("users");
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [users, setUsers] = useState([]);
   const [projects, setProjects] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredData, setFilteredData] = useState({ users: [], projects: [] });
+  const [recentActivity, setRecentActivity] = useState([]);
+  const [analyticsData, setAnalyticsData] = useState({
+    projectsThisMonth: 0,
+    popularProjects: [],
+  });
 
   // Add state for user editing
   const [editingUser, setEditingUser] = useState({
@@ -20,6 +36,12 @@ function AdminPanel() {
 
   // Add new state for likes data
   const [projectLikes, setProjectLikes] = useState({});
+
+  // Add stats state
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    totalProjects: 0,
+  });
 
   const navigate = useNavigate();
 
@@ -92,6 +114,60 @@ function AdminPanel() {
 
     fetchLikes();
   }, [navigate]);
+
+  useEffect(() => {
+    // Calculate stats
+    const calculateStats = () => {
+      const totalUsers = users.length;
+      const totalProjects = projects.length;
+      setStats({ totalUsers, totalProjects });
+    };
+
+    calculateStats();
+  }, [users, projects]);
+
+  // Add search functionality
+  useEffect(() => {
+    if (searchQuery) {
+      const filteredUsers = users.filter(
+        (user) =>
+          user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          user.email.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+
+      const filteredProjects = projects.filter(
+        (project) =>
+          project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          project.owner_username
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
+      );
+
+      setFilteredData({ users: filteredUsers, projects: filteredProjects });
+    } else {
+      setFilteredData({ users: users, projects: projects });
+    }
+  }, [searchQuery, users, projects]);
+
+  // Add analytics calculations
+  useEffect(() => {
+    // Calculate projects this month
+    const currentMonth = new Date().getMonth();
+    const projectsThisMonth = projects.filter((project) => {
+      const projectDate = new Date(project.time_submitted);
+      return projectDate.getMonth() === currentMonth;
+    }).length;
+
+    // Get popular projects (most liked)
+    const popularProjects = [...projects]
+      .sort((a, b) => (b.like_count || 0) - (a.like_count || 0))
+      .slice(0, 3);
+
+    setAnalyticsData({
+      projectsThisMonth,
+      popularProjects,
+    });
+  }, [users, projects]);
 
   const handleDeleteUser = async (userId) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
@@ -173,6 +249,12 @@ function AdminPanel() {
   const renderTabs = () => (
     <div className='admin-tabs'>
       <button
+        className={activeTab === "dashboard" ? "active" : ""}
+        onClick={() => setActiveTab("dashboard")}
+      >
+        <FaChartBar /> Dashboard
+      </button>
+      <button
         className={activeTab === "users" ? "active" : ""}
         onClick={() => setActiveTab("users")}
       >
@@ -193,8 +275,87 @@ function AdminPanel() {
     </div>
   );
 
+  const renderDashboard = () => (
+    <section className='dashboard-section'>
+      <div className='dashboard-header'>
+        <div className='search-bar'>
+          <FaSearch />
+          <input
+            type='text'
+            placeholder='Search users, projects...'
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      </div>
+
+      {searchQuery && (
+        <div className='search-results'>
+          <h3>Search Results</h3>
+          <div className='results-grid'>
+            <div className='users-results'>
+              <h4>Users ({filteredData.users.length})</h4>
+              {filteredData.users.map((user) => (
+                <div
+                  key={user.id}
+                  className='result-item'
+                >
+                  {user.username} - {user.email}
+                </div>
+              ))}
+            </div>
+            <div className='projects-results'>
+              <h4>Projects ({filteredData.projects.length})</h4>
+              {filteredData.projects.map((project) => (
+                <div
+                  key={project.id}
+                  className='result-item'
+                >
+                  {project.name} by {project.owner_username}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className='stats-grid'>
+        <div className='stat-card'>
+          <h3>Total Users</h3>
+          <p>{stats.totalUsers}</p>
+        </div>
+        <div className='stat-card'>
+          <h3>Total Projects</h3>
+          <p>{stats.totalProjects}</p>
+        </div>
+        <div className='stat-card'>
+          <h3>Projects This Month</h3>
+          <p>{analyticsData.projectsThisMonth}</p>
+        </div>
+      </div>
+
+      <div className='dashboard-grid'>
+        <div className='popular-projects'>
+          <h3>Most Popular Projects</h3>
+          {analyticsData.popularProjects.map((project) => (
+            <div
+              key={project.id}
+              className='popular-project-item'
+            >
+              <h4>{project.name}</h4>
+              <p>{project.like_count || 0} likes</p>
+              <small>by {project.owner_username}</small>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+
   const renderContent = () => {
     switch (activeTab) {
+      case "dashboard":
+        return renderDashboard();
       case "users":
         return (
           <section className='users-section'>
