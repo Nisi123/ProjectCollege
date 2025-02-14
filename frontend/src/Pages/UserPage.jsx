@@ -313,6 +313,37 @@ const UserProfile = () => {
     }
   };
 
+  const renderSettingsModal = () => {
+    const userData = JSON.parse(localStorage.getItem("user"));
+    return (
+      <div className='modal'>
+        <h2>Settings</h2>
+        <button onClick={() => navigate("/complete-profile")}>Edit</button>
+        {userData?.isAdmin && (
+          <button
+            onClick={() => navigate("/admin")}
+            className='adminButton'
+          >
+            Admin Panel
+          </button>
+        )}
+        <button onClick={logout}>Logout</button>
+        <button
+          onClick={() => setShowDeleteConfirm(true)}
+          className='deleteButton'
+        >
+          Delete Profile
+        </button>
+        <button
+          onClick={closeModal}
+          className='closeButton'
+        >
+          Close
+        </button>
+      </div>
+    );
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
@@ -436,27 +467,7 @@ const UserProfile = () => {
         />
 
         {isModalOpen && (
-          <div className='modalOverlay'>
-            <div className='modal'>
-              <h2>Settings</h2>
-              <button onClick={() => navigate("/complete-profile")}>
-                Edit
-              </button>
-              <button onClick={logout}>Logout</button>
-              <button
-                onClick={() => setShowDeleteConfirm(true)}
-                className='deleteButton'
-              >
-                Delete Profile
-              </button>
-              <button
-                onClick={closeModal}
-                className='closeButton'
-              >
-                Close
-              </button>
-            </div>
-          </div>
+          <div className='modalOverlay'>{renderSettingsModal()}</div>
         )}
 
         {/* Add Delete Confirmation Modal */}

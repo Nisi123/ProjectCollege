@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, File, UploadFile, Form
+from fastapi import APIRouter, HTTPException, File, UploadFile, Form, Body
 from app.models.user import User, UserInDB, UserInDBResponse
 from app.database import get_db
 from bson import ObjectId
@@ -6,8 +6,54 @@ from typing import List, Optional
 from app.services.user_service import create_user, update_user_profile, login_user, get_all_users, get_user_by_id, get_user_by_email  
 from pydantic import BaseModel
 from datetime import datetime
+from app.config import settings
 
-router = APIRouter()    
+router = APIRouter()
+
+# Place admin routes FIRST
+@router.get("/admin/users")
+async def get_users_for_admin():
+    try:
+        db = get_db()
+        users = list(db["users"].find())
+        formatted_users = []
+        for user in users:
+            user_dict = {
+                "id": str(user["_id"]),
+                "username": user["username"],
+                "email": user["email"],
+                "isAdmin": user.get("isAdmin", False)
+            }
+            formatted_users.append(user_dict)
+        print("Admin users response:", formatted_users)
+        return formatted_users
+    except Exception as e:
+        print(f"Error in get_users_for_admin: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/projects")
+async def get_projects_for_admin():
+    try:
+        db = get_db()
+        projects = list(db["projects"].find())
+        formatted_projects = []
+        for project in projects:
+            user = db["users"].find_one({"username": project["user_associated"]})
+            project_dict = {
+                "id": str(project["_id"]),
+                "name": project["name"],
+                "description": project.get("description", ""),
+                "owner_username": user["username"] if user else "Unknown",
+                "liked_by": project.get("liked_by", []),  # Add this
+                "like_count": project.get("like_count", 0),  # Add this
+                "reviews": project.get("reviews", [])  # Add this
+            }
+            formatted_projects.append(project_dict)
+        print("Admin projects response:", formatted_projects)
+        return formatted_projects
+    except Exception as e:
+        print(f"Error in get_projects_for_admin: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/", response_model=UserInDB)
 async def create_user_route(user: User):
@@ -144,3 +190,27 @@ async def delete_user(user_id: str):
         raise HTTPException(status_code=404, detail="User not found")
         
     return {"message": "User and associated projects deleted successfully"}
+
+class AdminSignupRequest(BaseModel):
+    username: str
+    email: str
+    password: str
+    admin_secret: str
+
+@router.post("/admin/signup", response_model=UserInDB)
+async def admin_signup(request: AdminSignupRequest):
+    if request.admin_secret != settings.ADMIN_SECRET_KEY:
+        raise HTTPException(status_code=403, detail="Invalid admin secret key")
+    
+    user_data = User(
+        username=request.username,
+        email=request.email,
+        password=request.password,
+        isAdmin=True
+    )
+    
+    existing_user = await get_user_by_email(user_data.email)
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    return await create_user(user_data)

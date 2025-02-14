@@ -1,9 +1,20 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import MainLogo from "../../Media/MainLogo.png";
 import { FaRegCircleUser } from "react-icons/fa6";
 
 const Navbar = ({ userId }) => {
+  const navigate = useNavigate();
+
+  const handleProfileClick = () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user?.isAdmin) {
+      navigate("/admin");
+    } else {
+      navigate("/profile");
+    }
+  };
+
   return (
     <div className='navbar'>
       <div className='navbarLogo'>
@@ -23,9 +34,9 @@ const Navbar = ({ userId }) => {
         </li>
       </ul>
       <div className='navbarImage'>
-        <Link to='/profile'>
+        <div onClick={handleProfileClick}>
           <FaRegCircleUser />
-        </Link>
+        </div>
       </div>
     </div>
   );

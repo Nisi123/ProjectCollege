@@ -278,6 +278,39 @@ async def add_review(project_id: str, request: ReviewRequest):
         print(f"Error in add_review: {str(e)}")  # Server-side debug log
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.delete("/{project_id}/comments/{comment_index}")
+async def delete_comment(project_id: str, comment_index: int):
+    try:
+        db = get_db()
+        project = db.projects.find_one({"_id": ObjectId(project_id)})
+        
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+            
+        if "reviews" not in project or comment_index >= len(project["reviews"]):
+            raise HTTPException(status_code=404, detail="Comment not found")
+
+        # Remove the comment at the specified index
+        result = db.projects.update_one(
+            {"_id": ObjectId(project_id)},
+            {"$unset": {f"reviews.{comment_index}": 1}}
+        )
+        
+        # Remove the null value that $unset creates
+        db.projects.update_one(
+            {"_id": ObjectId(project_id)},
+            {"$pull": {"reviews": None}}
+        )
+
+        if result.modified_count == 0:
+            raise HTTPException(status_code=500, detail="Failed to delete comment")
+
+        return {"message": "Comment deleted successfully"}
+        
+    except Exception as e:
+        print(f"Error deleting comment: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.get("/top", response_model=List[ProjectInDB])
 async def get_top_projects():
     db = get_db()
@@ -336,4 +369,18 @@ async def get_projects_by_user_id(user_id: str):
         
     except Exception as e:
         print(f"Error getting user projects: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/likes")
+async def get_all_project_likes():
+    try:
+        db = get_db()
+        projects = db["projects"].find({}, {"_id": 1, "liked_by": 1})
+        
+        likes_dict = {}
+        for project in projects:
+            likes_dict[str(project["_id"])] = project.get("liked_by", [])
+            
+        return likes_dict
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

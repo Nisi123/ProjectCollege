@@ -11,6 +11,7 @@ class User(BaseModel):
     position: Optional[str] = "User Position"
     year_of_birth: Optional[int] = 0
     level: Optional[str] = "No Level"
+    isAdmin: Optional[bool] = False
 
 class Project(BaseModel):
     id: str
@@ -18,7 +19,7 @@ class Project(BaseModel):
     description: Optional[str] = ""
     like_count: int = 0
     project_pic: Optional[str] = None
-    project_images: List[str] = []  # Add this field
+    project_images: List[str] = []
     project_url: Optional[str] = None
     reviews: List[str] = []
 

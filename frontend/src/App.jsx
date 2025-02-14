@@ -8,6 +8,8 @@ import SignupLogin from "./Pages/Signup";
 import ProtectedRoute from "./Services/protectedRoute";
 import ParentComponent from "./Components/ParentComponent";
 import OtherUserPage from "./Pages/OtherUserPage";
+import AdminPanel from "./Pages/AdminPanel";
+import ErrorBoundary from "./Components/ErrorBoundary";
 
 function App() {
   return (
@@ -44,6 +46,19 @@ function App() {
           <Route
             path='/user/:userId'
             element={<ProtectedRoute element={<OtherUserPage />} />}
+          />
+          <Route
+            path='/admin'
+            element={
+              <ProtectedRoute
+                element={
+                  <ErrorBoundary fallback={<div>Something went wrong</div>}>
+                    <AdminPanel />
+                  </ErrorBoundary>
+                }
+                adminOnly={true}
+              />
+            }
           />
         </Routes>
       </Layout>

@@ -81,14 +81,18 @@ async def get_user_by_email(email: str) -> Optional[UserInDB]:
 async def login_user(email: str, password: str) -> Optional[UserInDB]:
     user = await get_user_by_email(email)
     if user:
-        print(f"User found for email {email}: {user}")
         if verify_password(password, user.password):
             print("Login successful")
-            return user
-        else:
-            print("Password verification failed")
-    else:
-        print("User not found or email mismatch")
+            # Make sure isAdmin is included in response
+            return UserInDB(
+                id=user.id,
+                username=user.username,
+                email=user.email,
+                password=user.password,
+                profile_pic=user.profile_pic,
+                isAdmin=user.isAdmin,
+                # ...other fields...
+            )
     return None
 
 async def get_user_by_id(user_id: str) -> Optional[UserInDB]:
