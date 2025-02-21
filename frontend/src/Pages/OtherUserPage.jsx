@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { FaRegHeart, FaHeart } from "react-icons/fa6";
-import { IoClose, IoChevronBack, IoChevronForward } from "react-icons/io5";
+import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 
 const OtherUserProfile = () => {
   const [user, setUser] = useState(null);

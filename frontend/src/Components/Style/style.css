@@ -2271,6 +2271,28 @@ form button:hover {
 .admin-panel .admin-tabs button svg {
   font-size: 1.2rem;
 }
+.admin-panel .admin-tabs button.download-btn, .admin-panel .admin-tabs button.logout-btn {
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+.admin-panel .admin-tabs .download-btn {
+  background-color: #27ae60;
+  color: white;
+  margin-left: auto;
+}
+.admin-panel .admin-tabs .download-btn:hover {
+  background-color: #219a52;
+}
+.admin-panel .admin-tabs .logout-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+.admin-panel .admin-tabs .logout-btn:hover {
+  background-color: #c0392b;
+}
 .admin-panel .modal-overlay {
   position: fixed;
   top: 0;

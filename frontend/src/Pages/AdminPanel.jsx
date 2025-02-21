@@ -9,6 +9,8 @@ import {
   FaUserPlus,
   FaChartLine,
   FaExclamationTriangle,
+  FaSignOutAlt,
+  FaDownload,
 } from "react-icons/fa";
 
 function AdminPanel() {
@@ -246,6 +248,33 @@ function AdminPanel() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
+
+  const handleDownloadData = () => {
+    const data = {
+      users,
+      projects,
+      stats,
+      analyticsData,
+    };
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "admin-panel-data.json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const renderTabs = () => (
     <div className='admin-tabs'>
       <button
@@ -271,6 +300,18 @@ function AdminPanel() {
         onClick={() => setActiveTab("comments")}
       >
         Comments
+      </button>
+      <button
+        className='download-btn'
+        onClick={handleDownloadData}
+      >
+        <FaDownload /> Export Data
+      </button>
+      <button
+        className='logout-btn'
+        onClick={handleLogout}
+      >
+        <FaSignOutAlt /> Logout
       </button>
     </div>
   );

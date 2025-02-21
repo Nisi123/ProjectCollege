@@ -147,6 +147,34 @@
       svg {
         font-size: 1.2rem;
       }
+
+      &.download-btn,
+      &.logout-btn {
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+      }
+    }
+
+    .download-btn {
+      background-color: #27ae60;
+      color: white;
+      margin-left: auto;
+
+      &:hover {
+        background-color: #219a52;
+      }
+    }
+
+    .logout-btn {
+      background-color: #e74c3c;
+      color: white;
+
+      &:hover {
+        background-color: #c0392b;
+      }
     }
   }
 
