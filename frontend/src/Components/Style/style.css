@@ -776,12 +776,90 @@
 .projectsContainer .projectImageContainer {
   height: 65%;
   border-bottom: 1px solid rgba(0, 0, 0, 0.269);
+  position: relative;
+  overflow: hidden;
 }
 .projectsContainer .projectImageContainer img {
   width: 100%;
   height: 100%;
   -o-object-fit: cover;
      object-fit: cover;
+}
+.projectsContainer .projectImageContainer .userProfilePic {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border: 2px solid white;
+  background: black;
+  z-index: 2;
+  top: 10px;
+  left: 10px;
+}
+.projectsContainer .projectImageSlider {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.projectsContainer .projectImageSlider .projectDetailsImage {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+}
+.projectsContainer .projectImageSlider .projectDetailsImage img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+.projectsContainer .projectImageSlider .sliderButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+  z-index: 2;
+}
+.projectsContainer .projectImageSlider .sliderButton:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+.projectsContainer .projectImageSlider .sliderButton.prev {
+  left: 10px;
+}
+.projectsContainer .projectImageSlider .sliderButton.next {
+  right: 10px;
+}
+.projectsContainer .projectImageSlider .sliderDots {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 2;
+}
+.projectsContainer .projectImageSlider .sliderDots .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.projectsContainer .projectImageSlider .sliderDots .dot.active {
+  background: white;
 }
 .projectsContainer .projectInfo {
   padding: 0.5rem;

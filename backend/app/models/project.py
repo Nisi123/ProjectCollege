@@ -4,6 +4,18 @@ from typing import List, Optional
 from bson import ObjectId
 from datetime import datetime
 
+class ProjectBase(BaseModel):
+    name: str
+    description: Optional[str] = None
+    project_url: Optional[str] = None
+    user_associated: str
+    project_pic: Optional[str] = None
+    like_count: int = 0
+    liked_by: List[str] = []
+    reviews: List[str] = []
+    user_pic: Optional[str] = None  # Add this field
+    user_id: Optional[str] = None   # Add this field
+
 class Project(BaseModel):
     name: str
     description: str

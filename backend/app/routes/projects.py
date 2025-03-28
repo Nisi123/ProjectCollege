@@ -384,3 +384,29 @@ async def get_all_project_likes():
         return likes_dict
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/with_users/")
+async def get_projects_with_users(skip: int = 0, limit: int = 10):
+    db = get_db()
+    projects = list(db.projects.find().skip(skip).limit(limit))
+    total_projects = db.projects.count_documents({})
+    
+    enriched_projects = []
+    for project in projects:
+        # Get user data for each project
+        user = db.users.find_one({"username": project["user_associated"]})
+        project_dict = dict(project)
+        project_dict["id"] = str(project_dict["_id"])
+        del project_dict["_id"]
+        
+        # Add user data to project
+        if user:
+            project_dict["user_id"] = str(user["_id"])
+            project_dict["user_pic"] = user.get("profile_pic")
+        
+        enriched_projects.append(project_dict)
+    
+    return {
+        "projects": enriched_projects,
+        "totalProjects": total_projects
+    }

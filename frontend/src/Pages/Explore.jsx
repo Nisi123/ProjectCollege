@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { FaRegHeart, FaHeart } from "react-icons/fa6";
-import { IoClose } from "react-icons/io5"; // Add this import
+import { IoClose, IoChevronBack, IoChevronForward } from "react-icons/io5"; // Update imports
 import { useNavigate } from "react-router-dom";
 
 const Explore = () => {
@@ -16,6 +16,8 @@ const Explore = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [selectedProject, setSelectedProject] = useState(null); // Add this state
   const [newReview, setNewReview] = useState("");
+  const [currentImageIndexes, setCurrentImageIndexes] = useState({}); // Add this state
+  const [currentImageIndex, setCurrentImageIndex] = useState(0); // Add this state
   const itemsPerPage = 20;
   const navigate = useNavigate();
 
@@ -27,15 +29,19 @@ const Explore = () => {
     const fetchProjects = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("http://localhost:8000/projects/", {
-          params: {
-            skip: 0,
-            limit: 1000,
-          },
-          headers: {
-            Accept: "application/json",
-          },
-        });
+        // Modified to get user details including profile picture
+        const response = await axios.get(
+          "http://localhost:8000/projects/with_users/",
+          {
+            params: {
+              skip: 0,
+              limit: 1000,
+            },
+            headers: {
+              Accept: "application/json",
+            },
+          }
+        );
 
         if (response.data?.projects) {
           const projects = response.data.projects;
@@ -112,6 +118,29 @@ const Explore = () => {
     }
 
     // If it's just a filename, add the full path
+    return `http://localhost:8000/uploads/${cleanPath}`;
+  };
+
+  // Modify the getUserImageUrl function to handle undefined user_pic
+  const getUserImageUrl = (url) => {
+    if (!url || url === "undefined" || url === "null") {
+      return `http://localhost:8000/uploads/default-profile-pic.png`;
+    }
+
+    if (url.includes("http://localhost:8000")) {
+      return url
+        .replace(/\\/g, "/")
+        .replace(
+          "http://localhost:8000uploads",
+          "http://localhost:8000/uploads"
+        );
+    }
+
+    const cleanPath = url.replace(/\\/g, "/");
+    if (cleanPath.startsWith("uploads/")) {
+      return `http://localhost:8000/${cleanPath}`;
+    }
+
     return `http://localhost:8000/uploads/${cleanPath}`;
   };
 
@@ -251,6 +280,38 @@ const Explore = () => {
     }
   };
 
+  const handlePrevImage = (e, projectId) => {
+    e.stopPropagation();
+    setCurrentImageIndexes((prev) => {
+      const project = projects.find((p) => p.id === projectId);
+      const images = [
+        project.project_pic,
+        ...(project.project_images || []),
+      ].filter(Boolean);
+      const currentIndex = prev[projectId] || 0;
+      return {
+        ...prev,
+        [projectId]: (currentIndex - 1 + images.length) % images.length,
+      };
+    });
+  };
+
+  const handleNextImage = (e, projectId) => {
+    e.stopPropagation();
+    setCurrentImageIndexes((prev) => {
+      const project = projects.find((p) => p.id === projectId);
+      const images = [
+        project.project_pic,
+        ...(project.project_images || []),
+      ].filter(Boolean);
+      const currentIndex = prev[projectId] || 0;
+      return {
+        ...prev,
+        [projectId]: (currentIndex + 1) % images.length,
+      };
+    });
+  };
+
   return (
     <div>
       <h1 className='exploreMainTitle'>Explore Projects</h1>
@@ -288,11 +349,20 @@ const Explore = () => {
             >
               <div className='projectImageContainer'>
                 <img
+                  src={getUserImageUrl(
+                    project.user_pic || project.user?.profile_pic
+                  )}
+                  alt={project.user_associated}
+                  className='userProfilePic'
+                  onError={(e) => {
+                    e.target.src = getUserImageUrl(null);
+                  }}
+                />
+                <img
                   src={getProjectImageUrl(project.project_pic)}
                   alt={project.name}
                   className='projectImage'
                   onError={(e) => {
-                    console.log("Image load error for:", project.project_pic);
                     e.target.src = getProjectImageUrl(null);
                   }}
                   loading='lazy'
@@ -341,14 +411,69 @@ const Explore = () => {
         >
           <div className='modal projectDetailsModal'>
             <div className='projectDetailsContent'>
-              <div className='projectDetailsImage'>
-                <img
-                  src={getProjectImageUrl(selectedProject.project_pic)}
-                  alt={selectedProject.name}
-                  onError={(e) => {
-                    e.target.src = getProjectImageUrl(null);
-                  }}
-                />
+              <div className='projectImageSlider'>
+                <div className='projectDetailsImage'>
+                  {(() => {
+                    const allImages = [
+                      selectedProject.project_pic,
+                      ...(selectedProject.project_images || []),
+                    ].filter(Boolean);
+
+                    return (
+                      <>
+                        <img
+                          src={getProjectImageUrl(allImages[currentImageIndex])}
+                          alt={selectedProject.name}
+                          onError={(e) => {
+                            e.target.src = getProjectImageUrl(null);
+                          }}
+                        />
+                        {allImages.length > 1 && (
+                          <>
+                            <button
+                              className='sliderButton prev'
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setCurrentImageIndex(
+                                  (prev) =>
+                                    (prev - 1 + allImages.length) %
+                                    allImages.length
+                                );
+                              }}
+                            >
+                              <IoChevronBack />
+                            </button>
+                            <button
+                              className='sliderButton next'
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setCurrentImageIndex(
+                                  (prev) => (prev + 1) % allImages.length
+                                );
+                              }}
+                            >
+                              <IoChevronForward />
+                            </button>
+                            <div className='sliderDots'>
+                              {allImages.map((_, index) => (
+                                <button
+                                  key={index}
+                                  className={`dot ${
+                                    index === currentImageIndex ? "active" : ""
+                                  }`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setCurrentImageIndex(index);
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          </>
+                        )}
+                      </>
+                    );
+                  })()}
+                </div>
               </div>
               <div className='projectDetailsHeader'>
                 <h2>{selectedProject.name}</h2>
